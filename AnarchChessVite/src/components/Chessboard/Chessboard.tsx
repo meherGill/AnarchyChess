@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChessSquareColor } from "@enums";
+import { ChessSquareColor } from "../../shared/enums";
 
 interface ChessSquarePropsInterface {
     squareColor: ChessSquareColor;

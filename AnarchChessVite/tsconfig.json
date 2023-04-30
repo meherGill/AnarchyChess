@@ -17,8 +17,9 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@component/*": ["./src/component/*"],
-      "@enums": ["./src/enums"],
+      "@components/*": ["./src/components/*"],
+      "@enums": ["./src/shared/enums.ts"],
+      "@shared/*": ["./src/shared/*"]
 
     }
   },
