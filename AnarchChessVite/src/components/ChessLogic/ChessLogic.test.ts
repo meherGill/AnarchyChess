@@ -175,13 +175,13 @@ describe("ChessLogic class", () => {
         },
     ];
     it("correctly finds the white and black king", () => {
-        expect(chessify0.blackKingPosition).toEqual([2, 0]);
+        expect(chessify0.blackKingPosition).toEqual({row: 2, column: 0});
 
-        expect(chessifyA.blackKingPosition).toEqual([0, 1]);
-        expect(chessifyA.whiteKingPosition).toEqual([7, 1]);
+        expect(chessifyA.blackKingPosition).toEqual({row: 0, column: 1});
+        expect(chessifyA.whiteKingPosition).toEqual({row: 7, column: 1});
 
-        expect(chessifyB.blackKingPosition).toEqual([0, 1]);
-        expect(chessifyB.whiteKingPosition).toEqual([2, 2]);
+        expect(chessifyB.blackKingPosition).toEqual({row:0, column:1});
+        expect(chessifyB.whiteKingPosition).toEqual({row:2, column:2});
     });
     describe("correctly returns the validMoves for a pawn", () => {
         it("correctly displays moves for black pawn in boardConfigA", () => {

@@ -1,6 +1,11 @@
 import { ChessPiecesName, PlayerColor, TypeOfChessPiece } from "@enums";
-import { IChessPiece, ISquareCoordinate } from "@shared/types";
-import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves } from "./moveGeneratingFunctions";
+import { IChessPiece, IMoveHistory, ISquareCoordinate } from "@shared/types";
+import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves } from "./moveGeneratingFunctions";
+import { checkIfGivenKingIsInCheck } from "./checkForCheck";
+
+export const getChessPieceNameFor = (chessPieceType: TypeOfChessPiece, color: PlayerColor) : ChessPiecesName => {
+    return `${color}_${chessPieceType}` as ChessPiecesName
+}
 
 export const checkIfCoordInBound = (coord: ISquareCoordinate): boolean => {
     let rowValid = false;
@@ -58,19 +63,11 @@ class ChessLogic {
     turnToPlay: PlayerColor = PlayerColor.white; //default player to play
     whiteInCheck: boolean = false; //default check value of whiteKing on starting board
     blackInCheck: boolean = false; //default check value of blackKing on starting board
-    blackKingPosition: [number, number] = [0, 4]; //the default position of black king on starting board
-    whiteKingPosition: [number, number] = [7, 4]; //the default position of white king on starting board
+    blackKingPosition: ISquareCoordinate = {row: 0, column: 4}; //the default position of black king on starting board
+    whiteKingPosition:ISquareCoordinate= {row: 7, column: 4}; //the default position of white king on starting board
 
-    lastWhiteMovePlayedArr?: Array<{
-        piece: ChessPiecesName;
-        from: ISquareCoordinate;
-        to: ISquareCoordinate;
-    }>;
-    lastBlackMovePlayedArr?: Array<{
-        piece: ChessPiecesName;
-        from: ISquareCoordinate;
-        to: ISquareCoordinate;
-    }>;
+    lastWhiteMovePlayedArr: Array<IMoveHistory> = [];
+    lastBlackMovePlayedArr: Array<IMoveHistory> = [];
 
     // forcedMoves:
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
@@ -98,15 +95,28 @@ class ChessLogic {
                     this.currentBoard[row][column]?.name ===
                     ChessPiecesName.whiteKing
                 ) {
-                    this.whiteKingPosition = [row, column];
+                    this.whiteKingPosition = {row: row, column: column};
                 } else if (
                     this.currentBoard[row][column]?.name ===
                     ChessPiecesName.blackKing
                 ) {
-                    this.blackKingPosition = [row, column];
+                    this.blackKingPosition = {row: row, column: column};
                 }
             }
         }
+    }
+
+    isKingInCheck = (king : ChessPiecesName.blackKing | ChessPiecesName.whiteKing) => {
+        let coordsForKing: ISquareCoordinate
+        if (king === ChessPiecesName.blackKing){
+            coordsForKing = this.blackKingPosition
+        }
+        else{
+            coordsForKing = this.whiteKingPosition
+        }
+
+        const result = checkIfGivenKingIsInCheck(coordsForKing,this.currentBoard)
+        return result
     }
 
     generateMovesFor = (
@@ -115,7 +125,6 @@ class ChessLogic {
         if (this.currentBoard[coord.row][coord.column]) {
             let returnCoordinatesArray: Array<ISquareCoordinate> = [];
             const piece = this.currentBoard[coord.row][coord.column]?.name;
-            let opponentPieceColor: PlayerColor;
             switch (piece) {
                 //for pawns
                 case ChessPiecesName.blackPawn:
@@ -127,157 +136,10 @@ class ChessLogic {
                         if en-passant available, en passant forced (done)
                         pawn promotion: get knight boost if promoted to knight
                     */
-                    const newCoordOneStepForward: ISquareCoordinate = {
-                        ...coord,
-                    };
-                    const typeOfPiece = returnColorOfPiece(piece);
 
-                    if (typeOfPiece === PlayerColor.black) {
-                        newCoordOneStepForward.row = coord.row + 1;
-                    } else {
-                        newCoordOneStepForward.row = coord.row - 1;
-                    }
-
-                    //check if pawn can move one step forward
-                    //inside this if is the logic for the pawn moving two steps forward
-                    if (
-                        checkIfCoordInBound(newCoordOneStepForward) &&
-                        checkIfSquareIsEmpty(newCoordOneStepForward, this.currentBoard)
-                    ) {
-                        returnCoordinatesArray.push(newCoordOneStepForward);
-
-                        //check if pawn can move two steps:
-                        //writing it inside this if condition because pawn cant move two steps
-                        //if the square infront of it is not clear, therefore if the parent if fails, then
-                        //no need to check for two steps
-                        const newCoordTwoStepForward = { ...coord };
-                        if (
-                            typeOfPiece === PlayerColor.black &&
-                            coord.row === 1
-                        ) {
-                            newCoordTwoStepForward.row = coord.row + 2;
-                        } else if (
-                            typeOfPiece === PlayerColor.white &&
-                            coord.row === 6
-                        ) {
-                            newCoordTwoStepForward.row = coord.row - 2;
-                        }
-                        if (checkIfSquareIsEmpty(newCoordTwoStepForward, this.currentBoard)) {
-                            returnCoordinatesArray.push(newCoordTwoStepForward);
-                        }
-                    }
-
-                    //START OF CODE
-                    // check if pawn can take enemy piece diagnally
-                    const newCoordDiagLeft = { ...coord };
-                    const newCoordDiagRight = { ...coord };
-
-                    opponentPieceColor = returnOpponentColor(piece)
-                    //populate newCoordDiagLeft and newCoordDiagRight
-                    if (typeOfPiece === PlayerColor.black) {
-                        newCoordDiagLeft.row = newCoordDiagLeft.row + 1;
-                        newCoordDiagLeft.column = newCoordDiagLeft.column - 1;
-                        newCoordDiagRight.row = newCoordDiagLeft.column =
-                            newCoordDiagLeft.row + 1;
-                        newCoordDiagRight.column = newCoordDiagRight.column + 1;
-                
-                    } else if (typeOfPiece === PlayerColor.white) {
-                        newCoordDiagLeft.row = newCoordDiagLeft.row - 1;
-                        newCoordDiagLeft.column = newCoordDiagLeft.column - 1;
-                        newCoordDiagRight.row = newCoordDiagRight.row - 1;
-                        newCoordDiagRight.column = newCoordDiagRight.column + 1;
-               
-                    } else {
-                        throw new Error("this shouldnt happen");
-                    }
-
-                    //iterate through the two diagnol columns to see if an opponent piece is present there
-                    [newCoordDiagLeft, newCoordDiagRight].forEach(
-                        (diagCooord) => {
-                            if (checkIfCoordInBound(diagCooord)) {
-                                const piece =
-                                    returnPieceOnCoord(diagCooord, this.currentBoard);
-                                if (piece) {
-                                    const pieceColor = returnColorOfPiece(
-                                        piece.name
-                                    );
-                                    if (pieceColor === opponentPieceColor) {
-                                        returnCoordinatesArray.push(diagCooord);
-                                    }
-                                }
-                            }
-                        }
-                    );
-
-                    // END IF PAWN CAN TAKE PIECE DIAGONALLY 
-                    
-
-                    //check if PAWN CAN EN PASSANTE
-                    let enPassantableCheck1 = false;
-                    if (returnColorOfPiece(piece) === PlayerColor.black) {
-                        if (coord.row === 4) {
-                            enPassantableCheck1 = true;
-                        }
-                    } else if (
-                        returnColorOfPiece(piece) === PlayerColor.white
-                    ) {
-                        if (coord.row === 3) {
-                            enPassantableCheck1 = true;
-                        }
-                    }
-                    if (enPassantableCheck1) {
-                        const lastWhiteMovePlayed =
-                            this.lastWhiteMovePlayedArr?.at(-1);
-                        const lastBlackMovePlayed =
-                            this.lastBlackMovePlayedArr?.at(-1);
-                        if (opponentPieceColor === PlayerColor.black) {
-                            if (
-                                lastBlackMovePlayed?.from.row === 1 &&
-                                lastBlackMovePlayed?.to.row === 3 &&
-                                lastBlackMovePlayed.piece ===
-                                    ChessPiecesName.blackPawn
-                            ) {
-                                if (
-                                    Math.abs(
-                                        coord.column -
-                                            lastBlackMovePlayed.to.column
-                                    ) === 1
-                                ) {
-                                    returnCoordinatesArray = [
-                                        {
-                                            row: lastBlackMovePlayed.to.row - 1,
-                                            column: lastBlackMovePlayed.to
-                                                .column,
-                                        },
-                                    ];
-                                }
-                            }
-                        } else if (opponentPieceColor === PlayerColor.white) {
-                            if (
-                                lastWhiteMovePlayed?.from.row === 6 &&
-                                lastWhiteMovePlayed?.to.row === 4 &&
-                                lastWhiteMovePlayed.piece ===
-                                    ChessPiecesName.whitePawn
-                            ) {
-                                if (
-                                    Math.abs(
-                                        coord.column -
-                                            lastWhiteMovePlayed.to.column
-                                    ) === 1
-                                ) {
-                                    returnCoordinatesArray = [
-                                        {
-                                            row: lastWhiteMovePlayed.to.row - 1,
-                                            column: lastWhiteMovePlayed.to
-                                                .column,
-                                        },
-                                    ];
-                                }
-                            }
-                        }
-                    }
-
+                    returnCoordinatesArray = pawnLikeMoves(coord, this.currentBoard, this.lastBlackMovePlayedArr, this.lastWhiteMovePlayedArr)
                     break;
+
                 case ChessPiecesName.blackKing:
                 case ChessPiecesName.whiteKing:
                     /*
@@ -288,36 +150,9 @@ class ChessLogic {
                             verticle castling
                             reverse castling //will add this later
                     */
-                    const tempMovesArr = [1,-1, 0]
-                    opponentPieceColor = returnOpponentColor(piece)
-                    for (let rowOffset of tempMovesArr){
-                        for (let columnOffset of tempMovesArr){
-                            if (rowOffset === 0 && columnOffset === 0) {
-                                // no offset to either row or column means that this square is the one with the king on it
-                                // so we skip it
-                                continue
-                            }
-                            else{
-                                const newCoords = {...coord}
-                                newCoords.column += columnOffset
-                                newCoords.row += rowOffset
-
-                                //check for c2 square, c2 is row: 5, column 2
-                                if (newCoords.column === 2 && newCoords.row === 5){
-                                    continue
-                                }
-                                if (checkIfCoordInBound(newCoords) && 
-                                    (
-                                        checkIfSquareIsEmpty(newCoords, this.currentBoard) ||
-                                        returnColorOfPiece(returnPieceOnCoord(newCoords, this.currentBoard)!.name) === opponentPieceColor
-                                    )
-                                ){
-                                    returnCoordinatesArray.push(newCoords)
-                                }
-                            }
-                        }
-                    }
+                    returnCoordinatesArray = kingLikeMoves(coord, this.currentBoard)
                     break;
+
                 case ChessPiecesName.blackKnight:
                 case ChessPiecesName.whiteKnight:
                     /*
@@ -326,6 +161,7 @@ class ChessLogic {
                     */
                     returnCoordinatesArray = [...knightLikeMoves(coord, this.currentBoard)]
                     break;
+
                 case ChessPiecesName.blackBishop:
                 case ChessPiecesName.whiteBishop:
                     /*
@@ -339,6 +175,7 @@ class ChessLogic {
                         returnCoordinatesArray = [...ilVaticanoChecker.secondBishopLikeCoords]
                     }
                     break;
+
                 case ChessPiecesName.blackQueen:
                 case ChessPiecesName.whiteQueen:
                     /*
@@ -348,6 +185,7 @@ class ChessLogic {
                     returnCoordinatesArray =[...returnCoordinatesArray, ...vanillaBishopLikeMoves(coord, this.currentBoard)]
                     returnCoordinatesArray =[...returnCoordinatesArray, ...rookLikeMoves(coord, this.currentBoard)]
                     break;
+
                 case ChessPiecesName.blackRook:
                 case ChessPiecesName.whiteRook:
                     /*
@@ -358,6 +196,7 @@ class ChessLogic {
                     */
                     returnCoordinatesArray =[...returnCoordinatesArray, ...rookLikeMoves(coord, this.currentBoard)]
                     break;
+
                 case ChessPiecesName.blackKnook:
                 case ChessPiecesName.whiteKnook:
                     /*
@@ -367,9 +206,11 @@ class ChessLogic {
                     returnCoordinatesArray = [...returnCoordinatesArray, ...rookLikeMoves(coord, this.currentBoard)]
                     returnCoordinatesArray = [...returnCoordinatesArray, ...knightLikeMoves(coord, this.currentBoard)]
                     break;
+
                 default:
                     returnCoordinatesArray = [];
             }
+
             return returnCoordinatesArray;
         } else {
             return [];

@@ -19,3 +19,9 @@ export interface IilVaticanoReturnType {
     ilVaticanoPossible: boolean,
     secondBishopLikeCoords: Array<ISquareCoordinate>
 }
+
+export interface IMoveHistory {
+    piece: ChessPiecesName,
+    from: ISquareCoordinate,
+    to: ISquareCoordinate,
+}

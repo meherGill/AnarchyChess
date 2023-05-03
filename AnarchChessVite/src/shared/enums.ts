@@ -15,30 +15,29 @@ export enum ForcedMoveType {
 
 
 export enum TypeOfChessPiece{
-   pawn = `PAWN`,
-   knight = `KNIGHT`,
-   king = `KING`,
-   queen = `QUEEN`,
-   knook = `KNOOK`,
-   bishop = `BISHOP`,
-   rook = `ROOK`
-    
+   Pawn = `PAWN`,
+   Knight = `KNIGHT`,
+   King = `KING`,
+   Queen = `QUEEN`,
+   Knook = `KNOOK`,
+   Bishop = `BISHOP`,
+   Rook = `ROOK`
 }
 
 export enum ChessPiecesName {
-    blackPawn = `${PlayerColor.black}_${TypeOfChessPiece.pawn}`,
-    blackKnight = `${PlayerColor.black}_${TypeOfChessPiece.knight}`,
-    blackBishop = `${PlayerColor.black}_${TypeOfChessPiece.bishop}`,
-    blackRook = `${PlayerColor.black}_${TypeOfChessPiece.rook}`,
-    blackQueen = `${PlayerColor.black}_${TypeOfChessPiece.queen}`,
-    blackKing = `${PlayerColor.black}_${TypeOfChessPiece.king}`,
-    blackKnook = `${PlayerColor.black}_${TypeOfChessPiece.knook}`,
-    whitePawn = `${PlayerColor.white}_${TypeOfChessPiece.pawn}`,
-    whiteKnight = `${PlayerColor.white}_${TypeOfChessPiece.knight}`,
-    whiteBishop = `${PlayerColor.white}_${TypeOfChessPiece.bishop}`,
-    whiteRook = `${PlayerColor.white}_${TypeOfChessPiece.rook}`,
-    whiteQueen = `${PlayerColor.white}_${TypeOfChessPiece.queen}`,
-    whiteKing = `${PlayerColor.white}_${TypeOfChessPiece.king}`,
-    whiteKnook = `${PlayerColor.white}_${TypeOfChessPiece.knook}`,
+    blackPawn = `${PlayerColor.black}_${TypeOfChessPiece.Pawn}`,
+    blackKnight = `${PlayerColor.black}_${TypeOfChessPiece.Knight}`,
+    blackBishop = `${PlayerColor.black}_${TypeOfChessPiece.Bishop}`,
+    blackRook = `${PlayerColor.black}_${TypeOfChessPiece.Rook}`,
+    blackQueen = `${PlayerColor.black}_${TypeOfChessPiece.Queen}`,
+    blackKing = `${PlayerColor.black}_${TypeOfChessPiece.King}`,
+    blackKnook = `${PlayerColor.black}_${TypeOfChessPiece.Knook}`,
+    whitePawn = `${PlayerColor.white}_${TypeOfChessPiece.Pawn}`,
+    whiteKnight = `${PlayerColor.white}_${TypeOfChessPiece.Knight}`,
+    whiteBishop = `${PlayerColor.white}_${TypeOfChessPiece.Bishop}`,
+    whiteRook = `${PlayerColor.white}_${TypeOfChessPiece.Rook}`,
+    whiteQueen = `${PlayerColor.white}_${TypeOfChessPiece.Queen}`,
+    whiteKing = `${PlayerColor.white}_${TypeOfChessPiece.King}`,
+    whiteKnook = `${PlayerColor.white}_${TypeOfChessPiece.Knook}`,
 }
 
