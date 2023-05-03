@@ -14,3 +14,8 @@ export interface IChessPiece {
     name: ChessPiecesName,
     lastPosition: ISquareCoordinate | null,
 }
+
+export interface IilVaticanoReturnType {
+    ilVaticanoPossible: boolean,
+    secondBishopLikeCoords: Array<ISquareCoordinate>
+}

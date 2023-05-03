@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { ChessPiecesName } from "@enums";
 import ChessLogic from "./ChessLogic";
-import { ISquareCoordinate } from "../../shared/types";
+import { ISquareCoordinate } from "@shared/types";
 
 const customSortFn = (a: ISquareCoordinate, b: ISquareCoordinate) => {
     if (a.row < b.row) {
@@ -95,11 +95,78 @@ describe("ChessLogic class", () => {
         [null, null, null, null, null, null, null, null],
     ];
 
+    let boardConfigQueen = [
+        [null, ChessPiecesName.blackKing, null, null, null, null, null, null],
+        [
+            ChessPiecesName.blackQueen,
+            ChessPiecesName.whitePawn,
+            ChessPiecesName.whiteKnight,
+            null,
+            null,
+            null,
+            null,
+            null,
+        ],
+        [null, null, null, null, null, null, null, null],
+        [
+            ChessPiecesName.whitePawn,
+            ChessPiecesName.blackPawn,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+        ],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, ChessPiecesName.whiteKing, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+    ];
+
+    let boardConfigKnook = [
+        [ChessPiecesName.whiteKing, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, ChessPiecesName.whiteKnook, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.blackKing]
+    ]
+
+    let boardConfigKnight = [
+        [ChessPiecesName.whiteKing, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, ChessPiecesName.whiteKnight, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.blackKing]
+    ]
+
+    let boardConfigRook = [
+        [ChessPiecesName.whiteKing, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, ChessPiecesName.blackRook, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.blackKing]
+    ]
+
     let chessify0 = new ChessLogic(boardConfig0);
     let chessifyA = new ChessLogic(boardConfigA);
     let chessifyB = new ChessLogic(boardConfigB);
     let chessifyC = new ChessLogic(boardConfigC);
     let chessifyPassant = new ChessLogic(boardConfigPassant);
+    let chessifyQueen = new ChessLogic(boardConfigQueen)
+    let chessifyKnook = new ChessLogic(boardConfigKnook)
+    let chessifyKnight = new ChessLogic(boardConfigKnight)
+    let chessifyRook = new ChessLogic(boardConfigRook)
+
     chessifyPassant.lastBlackMovePlayedArr = [
         {
             piece: ChessPiecesName.blackPawn,
@@ -217,5 +284,112 @@ describe("ChessLogic class", () => {
                 ].sort(customSortFn)
             );
         });
+
+        it ("correctly displays queen moves", () => {
+            let result = chessifyQueen.generateMovesFor({row: 1, column: 0}).sort(customSortFn)
+            expect(result).toEqual([
+                {row: 0, column: 0},
+                {row: 2, column: 0},
+                {row: 3, column: 0},
+                {row: 1, column: 1},
+                {row: 2, column: 1},
+                {row: 3, column: 2},
+                {row: 4, column: 3},
+                {row: 5, column: 4},
+                {row: 6, column: 5},
+                {row: 7, column: 6}
+            ].sort(customSortFn))
+        })
+
+        it ("correctly displays queen moves", () => {
+            let result = chessifyQueen.generateMovesFor({row: 1, column: 0}).sort(customSortFn)
+            expect(result).toEqual([
+                {row: 0, column: 0},
+                {row: 2, column: 0},
+                {row: 3, column: 0},
+                {row: 1, column: 1},
+                {row: 2, column: 1},
+                {row: 3, column: 2},
+                {row: 4, column: 3},
+                {row: 5, column: 4},
+                {row: 6, column: 5},
+                {row: 7, column: 6}
+            ].sort(customSortFn))
+        })
+
+        it ("correctly displays rook moves", () => {
+            let result = chessifyRook.generateMovesFor({row: 4, column: 3}).sort(customSortFn)
+            expect(result).toEqual([
+                {row: 0, column: 3},
+                {row: 1, column: 3},
+                {row: 2, column: 3},
+                {row: 3, column: 3},
+                {row: 5, column: 3},
+                {row: 6, column: 3},
+                {row: 7, column: 3},
+                {row: 4, column: 0},
+                {row: 4, column: 1},
+                {row: 4, column: 2},
+                {row: 4, column: 4},
+                {row: 4, column: 5},
+                {row: 4, column: 6},
+                {row: 4, column: 7},
+            ].sort(customSortFn))
+        })
+
+        it ("correctly displays bishop moves", () => {
+            let result = chessifyC.generateMovesFor({row: 5, column: 0}).sort(customSortFn)
+            expect(result).toEqual([
+                {row: 6, column: 1},
+                {row: 4, column: 1},
+                {row: 3, column: 2},
+                {row: 2, column: 3},
+                {row: 1, column: 4},
+                {row: 0, column: 5},
+            ].sort(customSortFn))
+        })
+
+        it ("correctly displays knight moves", () => {
+            let result = chessifyKnight.generateMovesFor({row: 4, column: 3}).sort(customSortFn)
+            expect(result).toEqual([
+                {row:3, column: 1},
+                {row:5, column: 1},
+                {row:3, column: 5},
+                {row:5, column: 5},
+                {row:6, column: 4},
+                {row:6, column: 2},
+                {row:2, column: 4},
+                {row:2, column: 2},
+
+            ].sort(customSortFn))
+        })
+
+        it ("correctly knook moves", () => {
+            let result = chessifyKnook.generateMovesFor({row: 4, column: 3}).sort(customSortFn)
+            expect(result).toEqual([
+                {row: 4, column: 0},
+                {row: 4, column: 1},
+                {row: 4, column: 2},
+                {row: 4, column: 4},
+                {row: 4, column: 5},
+                {row: 4, column: 6},
+                {row: 4, column: 7},
+                {row: 3, column: 3},
+                {row: 2, column: 3},
+                {row: 1, column: 3},
+                {row: 0, column: 3},
+                {row: 5, column: 3},
+                {row: 6, column: 3},
+                {row: 7, column: 3},
+                {row: 2, column: 4},
+                {row: 2, column: 2},
+                {row: 6, column: 2},
+                {row: 6, column: 4},
+                {row: 3, column: 1},
+                {row: 5, column: 1},
+                {row: 3, column: 5},
+                {row: 5, column: 5},
+            ].sort(customSortFn))
+        })
     });
 });
