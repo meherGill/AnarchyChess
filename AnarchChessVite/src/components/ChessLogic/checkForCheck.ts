@@ -3,11 +3,12 @@ import { checkIfCoordInBound, getChessPieceNameFor, returnColorOfPiece, returnOp
 import { ChessPiecesName, PlayerColor, TypeOfChessPiece } from "@enums";
 import { checkIfPieceAtCoord, kingLikeMoves, knightLikeMoves, pawnLikeMoves, rookLikeMoves, vanillaBishopLikeMoves } from "./moveGeneratingFunctions";
 
-const rookMovesForCheck = rookLikeMoves;
-const bishopMovesForCheck = vanillaBishopLikeMoves;
-const knightMovesForCheck = knightLikeMoves;
-const kingMovesForCheck = kingLikeMoves;
+const rookMovesForCheck : (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) => any= rookLikeMoves;
+const bishopMovesForCheck : Function= vanillaBishopLikeMoves;
+const knightMovesForCheck : Function= knightLikeMoves;
+const kingMovesForCheck : Function= kingLikeMoves;
 //knook and queen are already handled by combination of rook , bishop and knight hence no need to add that
+
 export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : {inCheck: boolean, threatAt: ISquareCoordinate | null}=> {
     const kingPiece = returnPieceOnCoord(givenKingPosition, currentBoard)
 
@@ -21,9 +22,9 @@ export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, 
         const opponentColor = returnOpponentColor(kingPiece.name)
 
         const possibleRookMovesAtKingsCoord = rookMovesForCheck(givenKingPosition, currentBoard)
-        const possibleBishopMovesAtKingsCoord = bishopMovesForCheck(givenKingPosition, currentBoard)
-        const possibleKnightMovesAtKingsCoord = knightMovesForCheck(givenKingPosition, currentBoard)
-        const possibleKingMovesAtKingsCoord = kingMovesForCheck(givenKingPosition, currentBoard)
+        const possibleBishopMovesAtKingsCoord = vanillaBishopLikeMoves(givenKingPosition, currentBoard)
+        const possibleKnightMovesAtKingsCoord = knightLikeMoves(givenKingPosition, currentBoard)
+        const possibleKingMovesAtKingsCoord = kingLikeMoves(givenKingPosition, currentBoard)
 
 
         //check for rook, knook and queen

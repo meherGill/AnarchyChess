@@ -1,6 +1,7 @@
 import { IChessPiece, IMoveHistory, ISquareCoordinate, IilVaticanoReturnType } from "@shared/types";
 import { checkIfCoordInBound, checkIfSquareIsEmpty, returnColorOfPiece, returnOpponentColor, returnPieceOnCoord, returnTypeAndColorOfPiece } from "./ChessLogic";
 import { ChessPiecesName, PlayerColor } from "@enums";
+import { checkIfGivenKingIsInCheck } from "./checkForCheck";
 
 export const checkIfPieceAtCoord = (pieceName: ChessPiecesName, coord: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : boolean => {
     if (!checkIfCoordInBound(coord)){
@@ -394,4 +395,36 @@ export const generateIlVaticano =  (bishopLikeCoord : ISquareCoordinate, current
 
         return returnIlVaticanoCheck
     }
+}
+
+export const returnCastlingCoord = (givenKingPosition: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : ISquareCoordinate | null=> {
+    const kingPiece = returnPieceOnCoord(givenKingPosition, currentBoard)
+    if (!kingPiece){
+        throw new Error("this shouldn't happen, givenKingPosition should point to the king");    
+    }
+
+    //check if kingPiece has moved at all
+    if (kingPiece.lastPosition){
+        return null
+    }
+
+    // check if king is currently in check
+    const checkResults = checkIfGivenKingIsInCheck(givenKingPosition, currentBoard)
+    if (checkResults.inCheck){
+        return null
+    }
+
+    // const kingColor = returnColorOfPiece(kingPiece.name)
+    // let castlingCoords = []
+    // To Check:
+    // - if king is moving through a check
+    // - if there is a rook present in the first or the last column of its respective rank
+    // - if there are no pieces present between the rook and the king
+    // - if the rook hasnt moved yet either
+
+    // check short side first (left side)
+    // const shortSideRookPosition = 
+
+    return null
+
 }

@@ -151,6 +151,8 @@ class ChessLogic {
                             reverse castling //will add this later
                     */
                     returnCoordinatesArray = kingLikeMoves(coord, this.currentBoard)
+
+    
                     break;
 
                 case ChessPiecesName.blackKnight:
