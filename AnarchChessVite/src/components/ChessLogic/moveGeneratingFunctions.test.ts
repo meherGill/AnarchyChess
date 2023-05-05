@@ -1,19 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { ChessPiecesName } from "@enums";
+import { ChessPiecesName, MoveAction } from "@enums";
 import ChessLogic from "./ChessLogic";
 import { ISquareCoordinate } from "@shared/types";
 import { vanillaBishopLikeMoves, knightLikeMoves, rookLikeMoves, generateIlVaticano } from "./moveGeneratingFunctions";
-import { ECDH } from "crypto";
+import { customSortFn, getCoordsOnly } from "../../shared/helperFunctionsForTest";
 
-const customSortFn = (a: ISquareCoordinate, b: ISquareCoordinate) => {
-    if (a.row < b.row) {
-        return -1;
-    } else if (a.row > b.row) {
-        return 1;
-    } else {
-        return a.column - b.column;
-    }
-};
 
 describe("ChessLogic class", () => {
     let boardConfigBishop = [
@@ -92,7 +83,8 @@ describe("ChessLogic class", () => {
     let chessifyIlVaticano = new ChessLogic(boardConfigIlVaticano);
 
     it ("correctly generates vanilla bishop like moves" ,() => {
-        const blackBishopResults = vanillaBishopLikeMoves({row: 5, column: 0},chessifyBishop.currentBoard).sort(customSortFn)
+        const blackBishopResultsGenMoves = vanillaBishopLikeMoves({row: 5, column: 0},chessifyBishop.currentBoard)
+        const blackBishopResults = getCoordsOnly(blackBishopResultsGenMoves).sort(customSortFn)
         expect(blackBishopResults).toEqual(
             [
                 {row: 4, column: 1},
@@ -104,7 +96,8 @@ describe("ChessLogic class", () => {
             ].sort(customSortFn)
         )
 
-        const whiteBishopResuts = vanillaBishopLikeMoves({row:5, column:2}, chessifyBishop.currentBoard).sort(customSortFn)
+        const whiteBishopResutsGenMoves = vanillaBishopLikeMoves({row:5, column:2}, chessifyBishop.currentBoard)
+        const whiteBishopResuts = getCoordsOnly(whiteBishopResutsGenMoves).sort(customSortFn)
         expect(whiteBishopResuts).toEqual(
             [
                 {row: 4, column: 1},
@@ -121,7 +114,8 @@ describe("ChessLogic class", () => {
     })
 
     it ("correctly generates rook like moves", () => {
-        const blackRookResults = rookLikeMoves({row: 6, column: 1}, chessifyRook.currentBoard).sort(customSortFn)
+        const blackRookResultsGenMoves = rookLikeMoves({row: 6, column: 1}, chessifyRook.currentBoard)
+        const blackRookResults = getCoordsOnly(blackRookResultsGenMoves).sort(customSortFn)
         expect(blackRookResults).toEqual([
             {row: 5, column: 1},
             {row: 4, column: 1},
@@ -138,7 +132,8 @@ describe("ChessLogic class", () => {
             {row: 6, column: 7},
         ].sort(customSortFn))
 
-        const whiteRookResults = rookLikeMoves({row:0, column: 6}, chessifyRook.currentBoard).sort(customSortFn)
+        const whiteRookResultsGenMoves = rookLikeMoves({row:0, column: 6}, chessifyRook.currentBoard)
+        const whiteRookResults = getCoordsOnly(whiteRookResultsGenMoves).sort(customSortFn)
         expect(whiteRookResults).toEqual([
             {row: 0, column: 0},
             {row: 0, column: 1},
@@ -158,7 +153,8 @@ describe("ChessLogic class", () => {
     })
 
     it ("correctly generates knight moves" , () => {
-        const blackKnight = knightLikeMoves({row: 4, column: 3}, chessifyKnight.currentBoard).sort(customSortFn)
+        const blackKnightGenMoves = knightLikeMoves({row: 4, column: 3}, chessifyKnight.currentBoard)
+        const blackKnight = getCoordsOnly(blackKnightGenMoves).sort(customSortFn)
         expect(blackKnight).toEqual([
             {row:  2, column: 4},
             {row:  2, column: 2},
@@ -170,7 +166,8 @@ describe("ChessLogic class", () => {
             {row:  5, column: 5},
         ].sort(customSortFn))
 
-        const whiteKnight = knightLikeMoves({row: 7, column: 7}, chessifyKnight.currentBoard)
+        const whiteKnightGenMoves = knightLikeMoves({row: 7, column: 7}, chessifyKnight.currentBoard)
+        const whiteKnight = getCoordsOnly(whiteKnightGenMoves)
         expect(whiteKnight).toEqual([
             {row: 5, column: 6}
         ])
@@ -192,7 +189,7 @@ describe("ChessLogic class", () => {
        
         expect(result2).toEqual({
             ilVaticanoPossible: true,
-            secondBishopLikeCoords: [{row: 2, column: 0}, {row: 2, column: 6}]
+            secondBishopLikeCoords: [{coord: {row: 2, column: 0}, action: MoveAction.ilVaticano}, {coord: {row: 2, column: 6}, action: MoveAction.ilVaticano}]
         })
 
         expect(result3).toEqual({
@@ -202,12 +199,12 @@ describe("ChessLogic class", () => {
 
         expect(result4_1).toEqual({
             ilVaticanoPossible: true,
-            secondBishopLikeCoords: [{row: 4, column: 4}]
+            secondBishopLikeCoords: [{coord: {row: 4, column: 4}, action: MoveAction.ilVaticano}]
         })
 
         expect(result4_2).toEqual({
             ilVaticanoPossible: true,
-            secondBishopLikeCoords: [{row: 4, column: 1}]
+            secondBishopLikeCoords: [{coord: {row: 4, column: 1}, action: MoveAction.ilVaticano}]
         })
 
         expect(result5).toEqual({

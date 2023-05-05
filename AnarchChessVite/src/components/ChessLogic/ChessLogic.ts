@@ -1,5 +1,5 @@
 import { ChessPiecesName, PlayerColor, TypeOfChessPiece } from "@enums";
-import { IChessPiece, IMoveHistory, ISquareCoordinate } from "@shared/types";
+import { IChessPiece, IGeneratedMoves, IMoveHistory, ISquareCoordinate } from "@shared/types";
 import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves } from "./moveGeneratingFunctions";
 import { checkIfGivenKingIsInCheck } from "./checkForCheck";
 
@@ -121,9 +121,9 @@ class ChessLogic {
 
     generateMovesFor = (
         coord: ISquareCoordinate
-    ): Array<ISquareCoordinate>  => {
+    ): Array<IGeneratedMoves>  => {
         if (this.currentBoard[coord.row][coord.column]) {
-            let returnCoordinatesArray: Array<ISquareCoordinate> = [];
+            let returnCoordinatesArray: Array<IGeneratedMoves> = [];
             const piece = this.currentBoard[coord.row][coord.column]?.name;
             switch (piece) {
                 //for pawns

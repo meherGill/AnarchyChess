@@ -1,17 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { ChessPiecesName } from "@enums";
 import ChessLogic from "./ChessLogic";
-import { ISquareCoordinate } from "@shared/types";
+import { IGeneratedMoves } from "@shared/types";
+import { customSortFn, getCoordsOnly } from "../../shared/helperFunctionsForTest";
 
-const customSortFn = (a: ISquareCoordinate, b: ISquareCoordinate) => {
-    if (a.row < b.row) {
-        return -1;
-    } else if (a.row > b.row) {
-        return 1;
-    } else {
-        return a.column - b.column;
-    }
-};
+
 describe("ChessLogic class", () => {
     let boardConfig0 = [
         [null, null, null, null, null, null, null],
@@ -185,26 +178,31 @@ describe("ChessLogic class", () => {
     });
     describe("correctly returns the validMoves for a pawn", () => {
         it("correctly displays moves for black pawn in boardConfigA", () => {
-            const result = chessifyA.generateMovesFor({ row: 1, column: 2 });
+            const resultGenMoves = chessifyA.generateMovesFor({ row: 1, column: 2 });
+            const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([{ row: 2, column: 2 }]);
         });
         it("correctly displays moves for a white pawn in boardConfigA", () => {
-            const result = chessifyA.generateMovesFor({ row: 6, column: 1 });
+            const resultGenMoves = chessifyA.generateMovesFor({ row: 6, column: 1 });
+            const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([
                 { row: 5, column: 1 },
                 { row: 4, column: 1 },
             ]);
         });
         it("correctly displays moves for black pawn in boardConfigB", () => {
-            const result = chessifyB.generateMovesFor({ row: 1, column: 2 });
+            const resultGenMoves = chessifyB.generateMovesFor({ row: 1, column: 2 });
+            const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([]);
         });
         it("correctly displays moves for a rank 7 white pawn in boardConfigB", () => {
-            const result = chessifyB.generateMovesFor({ row: 1, column: 2 });
+            const resultGenMoves = chessifyB.generateMovesFor({ row: 1, column: 2 })
+            const result = getCoordsOnly(resultGenMoves);
             expect(result).toEqual([]);
         });
         it("correctly displays moves for white pawn in boardConfigC", () => {
-            const result = chessifyC.generateMovesFor({ row: 6, column: 1 });
+            const resultGenMoves = chessifyC.generateMovesFor({ row: 6, column: 1 });
+            const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([
                 { row: 5, column: 1 },
                 { row: 4, column: 1 },
@@ -212,19 +210,21 @@ describe("ChessLogic class", () => {
             ]);
         });
         it("correctly displays only move passant for pawn in boardConfigPassant", () => {
-            const result = chessifyPassant.generateMovesFor({
+            const resultGenMoves = chessifyPassant.generateMovesFor({
                 row: 3,
                 column: 0,
             });
+            const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([{ row: 2, column: 1 }]);
         });
     });
     describe("correctly returns validMoves for a king", () => {
         it("correctly displays moves for both kings in boardConfig0", () => {
-            const resultBlackking = chessify0.generateMovesFor({
+            const resultBlackkingGenMoves = chessify0.generateMovesFor({
                 row: 2,
                 column: 0,
-            }) as Array<ISquareCoordinate>;
+            }) as Array<IGeneratedMoves>;
+            const resultBlackking = getCoordsOnly(resultBlackkingGenMoves)
             resultBlackking.sort(customSortFn);
             expect(resultBlackking).toEqual(
                 [
@@ -236,10 +236,11 @@ describe("ChessLogic class", () => {
                 ].sort(customSortFn)
             );
 
-            const resultWhiteKing = chessify0.generateMovesFor({
+            const resultWhiteKingGenMoves = chessify0.generateMovesFor({
                 row: 6,
                 column: 7,
-            }) as Array<ISquareCoordinate>;
+            }) as Array<IGeneratedMoves>;
+            const resultWhiteKing = getCoordsOnly(resultWhiteKingGenMoves)
             resultWhiteKing.sort(customSortFn);
             expect(resultWhiteKing).toEqual(
                 [
@@ -252,10 +253,12 @@ describe("ChessLogic class", () => {
             );
         });
         it("correctly displays moves for both kings in boardConfigPassantable", () => {
-            const resultBlackKing = chessifyPassant.generateMovesFor({
+            const resultBlackKingGenMoves = chessifyPassant.generateMovesFor({
                 row: 0,
                 column: 1,
-            }) as Array<ISquareCoordinate>;
+            }) as Array<IGeneratedMoves>;
+            const resultBlackKing = getCoordsOnly(resultBlackKingGenMoves)
+
             resultBlackKing.sort(customSortFn);
 
             expect(resultBlackKing).toEqual(
@@ -267,10 +270,11 @@ describe("ChessLogic class", () => {
                 ].sort(customSortFn)
             );
 
-            const resultWhiteKing = chessifyPassant.generateMovesFor({
+            const resultWhiteKingGenMoves = chessifyPassant.generateMovesFor({
                 row: 6,
                 column: 1,
-            }) as Array<ISquareCoordinate>;
+            }) as Array<IGeneratedMoves>;
+            const resultWhiteKing = getCoordsOnly(resultWhiteKingGenMoves)
             resultWhiteKing.sort(customSortFn);
             expect(resultWhiteKing).toEqual(
                 [
@@ -286,7 +290,8 @@ describe("ChessLogic class", () => {
         });
 
         it ("correctly displays queen moves", () => {
-            let result = chessifyQueen.generateMovesFor({row: 1, column: 0}).sort(customSortFn)
+            let resultGenMoves : IGeneratedMoves[] = chessifyQueen.generateMovesFor({row: 1, column: 0})
+            const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 0, column: 0},
                 {row: 2, column: 0},
@@ -302,7 +307,8 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays queen moves", () => {
-            let result = chessifyQueen.generateMovesFor({row: 1, column: 0}).sort(customSortFn)
+            let resultGenMoves = chessifyQueen.generateMovesFor({row: 1, column: 0})
+            const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 0, column: 0},
                 {row: 2, column: 0},
@@ -318,7 +324,8 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays rook moves", () => {
-            let result = chessifyRook.generateMovesFor({row: 4, column: 3}).sort(customSortFn)
+            let resultGenMoves = chessifyRook.generateMovesFor({row: 4, column: 3})
+            const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 0, column: 3},
                 {row: 1, column: 3},
@@ -338,7 +345,8 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays bishop moves", () => {
-            let result = chessifyC.generateMovesFor({row: 5, column: 0}).sort(customSortFn)
+            let resultGenMoves = chessifyC.generateMovesFor({row: 5, column: 0})
+            const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 6, column: 1},
                 {row: 4, column: 1},
@@ -350,7 +358,8 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays knight moves", () => {
-            let result = chessifyKnight.generateMovesFor({row: 4, column: 3}).sort(customSortFn)
+            let resultGenMoves = chessifyKnight.generateMovesFor({row: 4, column: 3})
+            const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row:3, column: 1},
                 {row:5, column: 1},
@@ -365,7 +374,8 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly knook moves", () => {
-            let result = chessifyKnook.generateMovesFor({row: 4, column: 3}).sort(customSortFn)
+            let resultGenMoves = chessifyKnook.generateMovesFor({row: 4, column: 3})
+            const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 4, column: 0},
                 {row: 4, column: 1},

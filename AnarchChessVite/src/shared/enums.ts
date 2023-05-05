@@ -41,3 +41,9 @@ export enum ChessPiecesName {
     whiteKnook = `${PlayerColor.white}_${TypeOfChessPiece.Knook}`,
 }
 
+export enum MoveAction{
+    enPassant = `EN_PASSANT`,
+    castling = `CASTLING`,
+    ilVaticano = `IL_VATICANO`,
+    knightBoost = `KNIGHT_BOOST`
+}

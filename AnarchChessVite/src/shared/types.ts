@@ -1,4 +1,4 @@
-import { ChessPiecesName, ForcedMoveType } from "./enums";
+import { ChessPiecesName, ForcedMoveType, MoveAction } from "./enums";
 
 export interface ISquareCoordinate {
     row: number;
@@ -15,9 +15,13 @@ export interface IChessPiece {
     lastPosition: ISquareCoordinate | null,
 }
 
+export interface IGeneratedMoves {
+    coord: ISquareCoordinate
+    action?: MoveAction
+}
 export interface IilVaticanoReturnType {
     ilVaticanoPossible: boolean,
-    secondBishopLikeCoords: Array<ISquareCoordinate>
+    secondBishopLikeCoords: Array<IGeneratedMoves>
 }
 
 export interface IMoveHistory {

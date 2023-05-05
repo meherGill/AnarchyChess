@@ -1,36 +1,34 @@
 import { IChessPiece, ISquareCoordinate, IilVaticanoReturnType } from "@shared/types";
 import { checkIfCoordInBound, getChessPieceNameFor, returnColorOfPiece, returnOpponentColor, returnPieceOnCoord, returnTypeAndColorOfPiece } from "./ChessLogic";
 import { ChessPiecesName, PlayerColor, TypeOfChessPiece } from "@enums";
-import { checkIfPieceAtCoord, kingLikeMoves, knightLikeMoves, pawnLikeMoves, rookLikeMoves, vanillaBishopLikeMoves } from "./moveGeneratingFunctions";
+import { checkIfPieceAtCoord, kingLikeMoves, knightLikeMoves, rookLikeMoves, vanillaBishopLikeMoves } from "./moveGeneratingFunctions";
 
-const rookMovesForCheck : (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) => any= rookLikeMoves;
-const bishopMovesForCheck : Function= vanillaBishopLikeMoves;
-const knightMovesForCheck : Function= knightLikeMoves;
-const kingMovesForCheck : Function= kingLikeMoves;
-//knook and queen are already handled by combination of rook , bishop and knight hence no need to add that
-
-export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : {inCheck: boolean, threatAt: ISquareCoordinate | null}=> {
-    const kingPiece = returnPieceOnCoord(givenKingPosition, currentBoard)
-
-    if (kingPiece){
+export const checkIfGivenPositionIsInCheck = (givenPosition: ISquareCoordinate, friendlyColor: PlayerColor, currentBoard: Array<Array<IChessPiece| null>>) : {inCheck: boolean, threatAt: ISquareCoordinate | null} => {
+    
         const returnValue = {
             inCheck: false,
             threatAt: null as ISquareCoordinate | null
         }
         
-        const kingColor = returnColorOfPiece(kingPiece.name)
-        const opponentColor = returnOpponentColor(kingPiece.name)
+        let opponentColor: PlayerColor
+        if (friendlyColor === PlayerColor.white){
+            opponentColor = PlayerColor.black
+        }
+        else{
+            opponentColor = PlayerColor.white
+        }
 
-        const possibleRookMovesAtKingsCoord = rookMovesForCheck(givenKingPosition, currentBoard)
-        const possibleBishopMovesAtKingsCoord = vanillaBishopLikeMoves(givenKingPosition, currentBoard)
-        const possibleKnightMovesAtKingsCoord = knightLikeMoves(givenKingPosition, currentBoard)
-        const possibleKingMovesAtKingsCoord = kingLikeMoves(givenKingPosition, currentBoard)
+        const possibleRookMovesAtKingsCoord = rookLikeMoves(givenPosition, currentBoard)
+        const possibleBishopMovesAtKingsCoord = vanillaBishopLikeMoves(givenPosition, currentBoard)
+        const possibleKnightMovesAtKingsCoord = knightLikeMoves(givenPosition, currentBoard)
+        const possibleKingMovesAtKingsCoord = kingLikeMoves(givenPosition, currentBoard)
 
 
         //check for rook, knook and queen
         let threatPresent: boolean = false
-        for (const coord of possibleRookMovesAtKingsCoord){
-            
+
+        for (const generatedMove of possibleRookMovesAtKingsCoord){
+            const coord = generatedMove.coord
             const rookPieceName = getChessPieceNameFor(TypeOfChessPiece.Rook, opponentColor)
             const knookPieceName = getChessPieceNameFor(TypeOfChessPiece.Knook, opponentColor)
             const queenPieceName = getChessPieceNameFor(TypeOfChessPiece.Queen, opponentColor)
@@ -47,7 +45,8 @@ export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, 
         if (threatPresent) return returnValue
 
         //check for knook, and knight
-        for (const coord of possibleKnightMovesAtKingsCoord){
+        for (const generatedMove of possibleKnightMovesAtKingsCoord){
+            const coord = generatedMove.coord
             const knightPieceName = getChessPieceNameFor(TypeOfChessPiece.Knight, opponentColor)
             const knookPieceName = getChessPieceNameFor(TypeOfChessPiece.Knook, opponentColor)
 
@@ -64,8 +63,8 @@ export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, 
         if (threatPresent) return returnValue
 
         //check for bishop, and queen
-        for (const coord of possibleBishopMovesAtKingsCoord){
-            
+        for (const generatedMove of possibleBishopMovesAtKingsCoord){
+            const coord = generatedMove.coord
             const bishopPieceName = getChessPieceNameFor(TypeOfChessPiece.Bishop, opponentColor)
             const queenPieceName = getChessPieceNameFor(TypeOfChessPiece.Queen, opponentColor)
 
@@ -82,7 +81,8 @@ export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, 
         if (threatPresent) return returnValue
 
         //check for king
-        for (const coord of possibleKingMovesAtKingsCoord){
+        for (const generatedMove of possibleKingMovesAtKingsCoord){
+            const coord = generatedMove.coord
             const kingPieceName = getChessPieceNameFor(TypeOfChessPiece.King, opponentColor)
             threatPresent = checkIfPieceAtCoord(kingPieceName, coord, currentBoard)
             if (threatPresent){
@@ -94,12 +94,12 @@ export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, 
         if (threatPresent) return returnValue
 
         //check for pawn
-        const coord1: ISquareCoordinate = {...givenKingPosition};
-        const coord2: ISquareCoordinate = {...givenKingPosition};
+        const coord1: ISquareCoordinate = {...givenPosition};
+        const coord2: ISquareCoordinate = {...givenPosition};
         coord1.column = coord1.column - 1
         coord2.column = coord2.column + 1
         let possiblePawnToLookOutForCoords: Array<ISquareCoordinate> = []
-        if (kingColor === PlayerColor.white){    
+        if (friendlyColor === PlayerColor.white){    
             coord1.row = coord1.row-1
             coord2.row = coord2.row-1
         }
@@ -128,6 +128,14 @@ export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, 
         if (threatPresent) return returnValue
 
         return returnValue
+}
+
+export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : {inCheck: boolean, threatAt: ISquareCoordinate | null}=> {
+    const kingPiece = returnPieceOnCoord(givenKingPosition, currentBoard)
+    
+    if (kingPiece){
+        const friendlyColor = returnColorOfPiece(kingPiece.name)
+        return checkIfGivenPositionIsInCheck(givenKingPosition, friendlyColor, currentBoard)
     }
     else{
         return {
