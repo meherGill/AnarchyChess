@@ -1,7 +1,7 @@
 import { ChessPiecesName, PlayerColor, TypeOfChessPiece } from "@enums";
 import { IChessPiece, IGeneratedMoves, IMoveHistory, ISquareCoordinate } from "@shared/types";
-import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves } from "./moveGeneratingFunctions";
-import { checkIfGivenKingIsInCheck } from "./checkForCheck";
+import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves, returnCastlingCoord } from "./moveGeneratingFunctions";
+import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
 
 export const getChessPieceNameFor = (chessPieceType: TypeOfChessPiece, color: PlayerColor) : ChessPiecesName => {
     return `${color}_${chessPieceType}` as ChessPiecesName
@@ -41,9 +41,14 @@ export const returnOpponentColor = (chessPiece: ChessPiecesName) : PlayerColor =
 
 }
 
-export const returnPieceOnCoord = (coord: ISquareCoordinate, currentBoard:  Array<Array<IChessPiece | null>>): IChessPiece | null => {
+export const getPieceOnCoord = (coord: ISquareCoordinate, currentBoard:  Array<Array<IChessPiece | null>>): IChessPiece | null => {
     return currentBoard[coord.row][coord.column];
 };
+
+export const setPieceOnCoord = (coord: ISquareCoordinate, pieceToSet: IChessPiece | null, currentBoard: Array<Array<IChessPiece | null>> ) : boolean => {
+    currentBoard[coord.row][coord.column] = pieceToSet
+    return true
+}
 
 export const returnTypeAndColorOfPiece = (piece: ChessPiecesName) => {
     return {
@@ -68,6 +73,10 @@ class ChessLogic {
 
     lastWhiteMovePlayedArr: Array<IMoveHistory> = [];
     lastBlackMovePlayedArr: Array<IMoveHistory> = [];
+
+    whiteHasCastled: boolean = false
+    blackHasCastled: boolean = false
+
 
     // forcedMoves:
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
@@ -146,13 +155,39 @@ class ChessLogic {
                         moves to add:
                             one step in every direction if not blocked by friendly pieces //done
                             no king can move two c2 square (row 5, column 2) //done
-                            normal castling
+                            normal castling //move generated, TO DO: generate moves for rook
                             verticle castling
                             reverse castling //will add this later
                     */
-                    returnCoordinatesArray = kingLikeMoves(coord, this.currentBoard)
+                    const colorOfPPiece = returnColorOfPiece(piece)
+                    const allKingsMoves = kingLikeMoves(coord, this.currentBoard)
 
-    
+                    //filters out all squares that are in check
+                    /* temporarilty assign the king's coordinate a null position
+                        because, when we are checking a king's move for potential checks, we dont want the king
+                        to block those potential check.
+                        As an example; if a row looks like [whiteQueen, blacKing, null,...]
+                        the null square in that row is being blocked by the whiteQueen, therefore, 
+                        the whiteQueen's threat is not there and the square will be counted as as safe square for the king, 
+                        in the absence of any other threats even though it is not
+                    */  
+                    const kingChessPiece = getPieceOnCoord(coord, this.currentBoard)
+                    setPieceOnCoord(coord, null, this.currentBoard)
+                    const allLegalKingMoves = allKingsMoves.filter(generatedMove => {
+                        const coord = generatedMove.coord
+                        const action = generatedMove.action
+                        
+                        return !checkIfGivenPositionIsInCheck(coord, colorOfPPiece, this.currentBoard).inCheck
+                    })
+                    
+                    //replacing the empty square used for the previous square back to a king piece
+                    setPieceOnCoord(coord, kingChessPiece, this.currentBoard)
+                    returnCoordinatesArray = allLegalKingMoves
+                    //if its white king and it hasnt castled or if its black king that hasnt castled, add castling coords
+                    if ((colorOfPPiece === PlayerColor.white && !this.whiteHasCastled) 
+                         || (colorOfPPiece === PlayerColor.black && !this.blackHasCastled)){
+                            returnCoordinatesArray = [...returnCoordinatesArray, ...returnCastlingCoord(coord, this.currentBoard)]
+                    }
                     break;
 
                 case ChessPiecesName.blackKnight:
@@ -162,6 +197,7 @@ class ChessLogic {
                             normal knight moves (done)
                     */
                     returnCoordinatesArray = [...knightLikeMoves(coord, this.currentBoard)]
+                    
                     break;
 
                 case ChessPiecesName.blackBishop:

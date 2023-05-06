@@ -1,5 +1,5 @@
 import { IChessPiece, IGeneratedMoves, IMoveHistory, ISquareCoordinate, IilVaticanoReturnType } from "@shared/types";
-import { checkIfCoordInBound, checkIfSquareIsEmpty, getChessPieceNameFor, returnColorOfPiece, returnOpponentColor, returnPieceOnCoord, returnTypeAndColorOfPiece } from "./ChessLogic";
+import { checkIfCoordInBound, checkIfSquareIsEmpty, getChessPieceNameFor, returnColorOfPiece, returnOpponentColor, getPieceOnCoord, returnTypeAndColorOfPiece } from "./ChessLogic";
 import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enums";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
 
@@ -7,7 +7,7 @@ export const checkIfPieceAtCoord = (pieceName: ChessPiecesName, coord: ISquareCo
     if (!checkIfCoordInBound(coord)){
         return false
     }
-    const piece = returnPieceOnCoord(coord,currentBoard)
+    const piece = getPieceOnCoord(coord,currentBoard)
     if (!piece){
         return false
     }
@@ -22,7 +22,7 @@ export const checkIfPieceAtCoord = (pieceName: ChessPiecesName, coord: ISquareCo
 
 export const checkIfValidCoordAndCaptureForPieceColor = (playerColor: PlayerColor, coord: ISquareCoordinate, currentBoard:Array<Array<IChessPiece| null>>) : {isValid: boolean, capture: boolean} => {
     if (checkIfCoordInBound(coord)){
-        const piece = returnPieceOnCoord(coord, currentBoard)
+        const piece = getPieceOnCoord(coord, currentBoard)
         if (piece){
             const colorOfPieceOnCoord = returnColorOfPiece(piece.name)
             if (colorOfPieceOnCoord === playerColor){
@@ -40,7 +40,7 @@ export const checkIfValidCoordAndCaptureForPieceColor = (playerColor: PlayerColo
 }
 
 export const pawnLikeMoves = (coord: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>, lastBlackMovePlayedArr: Array<IMoveHistory>, lastWhiteMovePlayedArr: Array<IMoveHistory>) : Array<IGeneratedMoves> => {
-    const piece = returnPieceOnCoord(coord, currentBoard)?.name
+    const piece = getPieceOnCoord(coord, currentBoard)?.name
     let opponentPieceColor : PlayerColor; 
     let playerColor: PlayerColor;
     let returnCoordinatesArray: Array<IGeneratedMoves> = []
@@ -118,7 +118,7 @@ export const pawnLikeMoves = (coord: ISquareCoordinate, currentBoard: Array<Arra
             (diagCooord) => {
                 if (checkIfCoordInBound(diagCooord)) {
                     const piece =
-                        returnPieceOnCoord(diagCooord, currentBoard);
+                        getPieceOnCoord(diagCooord, currentBoard);
                     if (piece) {
                         const pieceColor = returnColorOfPiece(
                             piece.name
@@ -208,7 +208,7 @@ export const pawnLikeMoves = (coord: ISquareCoordinate, currentBoard: Array<Arra
 
 export const kingLikeMoves = (coord: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : Array<IGeneratedMoves> => {
     const tempMovesArr = [1,-1, 0]
-    const piece = returnPieceOnCoord(coord, currentBoard)?.name
+    const piece = getPieceOnCoord(coord, currentBoard)?.name
     let returnCoordinatesArray : Array<IGeneratedMoves> = []
     if (piece){
         const opponentPieceColor = returnOpponentColor(piece)
@@ -231,7 +231,7 @@ export const kingLikeMoves = (coord: ISquareCoordinate, currentBoard: Array<Arra
                     if (checkIfCoordInBound(newCoords) && 
                         (
                             checkIfSquareIsEmpty(newCoords, currentBoard) ||
-                            returnColorOfPiece(returnPieceOnCoord(newCoords, currentBoard)!.name) === opponentPieceColor
+                            returnColorOfPiece(getPieceOnCoord(newCoords, currentBoard)!.name) === opponentPieceColor
                         )
                     ){
                         returnCoordinatesArray.push({coord: newCoords})
@@ -245,7 +245,7 @@ export const kingLikeMoves = (coord: ISquareCoordinate, currentBoard: Array<Arra
 
 const commonFunctionalityForRookAndBishop = (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece| null>>,functionArray: Array<Function>) : Array<IGeneratedMoves>=> {
     const returnArray : Array<IGeneratedMoves> = []
-    const playerColor = returnColorOfPiece(returnPieceOnCoord(coords, currentBoard)!.name)
+    const playerColor = returnColorOfPiece(getPieceOnCoord(coords, currentBoard)!.name)
     for (let func of functionArray){
         let newCoords: ISquareCoordinate = {...coords}
         while (true){
@@ -309,7 +309,7 @@ export const rookLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Arr
 
 export const knightLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : Array<IGeneratedMoves>=> {
     const returnMovesArray : Array<IGeneratedMoves>= []
-    const playerColor = returnColorOfPiece(returnPieceOnCoord(coords, currentBoard)!.name)
+    const playerColor = returnColorOfPiece(getPieceOnCoord(coords, currentBoard)!.name)
 
     const twoUpOneRight = {row: coords.row-2, column: coords.column+1}
     const twoUpOneLeft = {row: coords.row-2, column: coords.column-1}
@@ -331,7 +331,7 @@ export const knightLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<A
 }
 
 export const generateIlVaticano =  (bishopLikeCoord : ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : IilVaticanoReturnType => {
-    const piece = returnPieceOnCoord(bishopLikeCoord, currentBoard)
+    const piece = getPieceOnCoord(bishopLikeCoord, currentBoard)
     let returnIlVaticanoCheck : IilVaticanoReturnType = {ilVaticanoPossible: false, secondBishopLikeCoords: []}
     if (piece){
         const playerColor : PlayerColor = returnColorOfPiece(piece.name)
@@ -356,7 +356,7 @@ export const generateIlVaticano =  (bishopLikeCoord : ISquareCoordinate, current
             let flag1 = false
             let flag2 = false
             if (checkIfCoordInBound(supposedBishopCoord)){
-                const piece = returnPieceOnCoord(supposedBishopCoord, currentBoard)
+                const piece = getPieceOnCoord(supposedBishopCoord, currentBoard)
                 if (piece?.name === friendlyBishop){
                     flag1 = true
                 }
@@ -373,7 +373,7 @@ export const generateIlVaticano =  (bishopLikeCoord : ISquareCoordinate, current
 
                 for (let columnOnly = firstBishopLikeFromLeft.column+1; columnOnly < secondBishopLikeFromLeft.column; columnOnly++ ){
                     const tempCoord: ISquareCoordinate = {...firstBishopLikeFromLeft, column: columnOnly}
-                    const pieceOnTempCoord = returnPieceOnCoord(tempCoord, currentBoard)
+                    const pieceOnTempCoord = getPieceOnCoord(tempCoord, currentBoard)
 
                     if (pieceOnTempCoord){
                         if (pieceOnTempCoord.name === pawnToCheckFor){
@@ -403,7 +403,7 @@ export const generateIlVaticano =  (bishopLikeCoord : ISquareCoordinate, current
 
 export const returnCastlingCoord = (givenKingPosition: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : Array<IGeneratedMoves> => {
     const castlingCoordArray : Array<IGeneratedMoves> = []
-    const kingPiece = returnPieceOnCoord(givenKingPosition, currentBoard)
+    const kingPiece = getPieceOnCoord(givenKingPosition, currentBoard)
     if (!kingPiece){
         throw new Error("this shouldn't happen, givenKingPosition should point to the king");    
     }
@@ -434,7 +434,10 @@ export const returnCastlingCoord = (givenKingPosition: ISquareCoordinate, curren
     const coordOfLongSideCastlingRook = {row: rookRow, column: 7}
     
     for (let coordOfCastlingRook of [coordOfShortSideCastlingRook, coordOfLongSideCastlingRook]){
-        const castlingPiece = returnPieceOnCoord(coordOfCastlingRook, currentBoard)
+        let addThisCoord = false //if this coord will be appened to the array that is returned or not
+        
+        const castlingPiece = getPieceOnCoord(coordOfCastlingRook, currentBoard)
+    
         if (!castlingPiece) continue //if there is no piece there
         if (castlingPiece.name !== getChessPieceNameFor(TypeOfChessPiece.Rook, kingColor)) continue //if the piece is not a rook
         if (castlingPiece.lastPosition) continue //if the piece has moved
@@ -456,17 +459,24 @@ export const returnCastlingCoord = (givenKingPosition: ISquareCoordinate, curren
 
         for (let columnVal = coordOfPieceOnLeft.column+1; columnVal < coordOfPieceOnRight.column; columnVal++){
             const coordBetweenKingAndRook : ISquareCoordinate = {...givenKingPosition, column: columnVal}
-            const pieceBetweenKingAndRook = returnPieceOnCoord(coordBetweenKingAndRook, currentBoard)
+            const pieceBetweenKingAndRook = getPieceOnCoord(coordBetweenKingAndRook, currentBoard)
             if (pieceBetweenKingAndRook){ 
                 // this means that its a non null value, hence there is piece present
+                addThisCoord = false
                 break
             }
 
             //only for the two squares next to king, see if it will move through a check
             if (Math.abs(columnVal - givenKingPosition.column) <= 2){
                 const checkVal = checkIfGivenPositionIsInCheck(coordBetweenKingAndRook, kingColor, currentBoard)
-                if (checkVal.inCheck) break
+                if (checkVal.inCheck) {
+                    addThisCoord = false
+                    break
+                }
             }
+            addThisCoord = true
+        }
+        if (addThisCoord){
             castlingCoordArray.push({coord: coordToReturn, action: MoveAction.castling})
         }
     }

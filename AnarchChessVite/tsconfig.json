@@ -19,8 +19,8 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "@enums": ["./src/shared/enums.ts"],
-      "@shared/*": ["./src/shared/*"]
-
+      "@shared/*": ["./src/shared/*"],
+      "@helperFunctionsForTest" : ["./src/shared/helperFunctionsForTest"]
     }
   },
   "include": ["src"],

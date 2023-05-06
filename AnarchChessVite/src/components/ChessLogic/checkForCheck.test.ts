@@ -1,8 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {ChessPiecesName} from "@enums";
 import ChessLogic from "./ChessLogic";
-import { ISquareCoordinate } from "@shared/types";
-import { checkIfGivenKingIsInCheck } from "./checkForCheck";
 
 describe("correctly detects if king is in check", () => {
     let boardConfigKingCheckFromQueen1 = [

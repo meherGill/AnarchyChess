@@ -4,6 +4,7 @@ import { ChessSquareColor } from "../../shared/enums";
 interface ChessSquarePropsInterface {
     squareColor: ChessSquareColor;
 }
+
 const ChessSquare = ({ squareColor }: ChessSquarePropsInterface) => {
     let bgToUse: string;
     if (squareColor === ChessSquareColor.dark) {

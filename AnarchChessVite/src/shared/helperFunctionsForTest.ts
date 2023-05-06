@@ -10,6 +10,10 @@ export const customSortFn = (a: ISquareCoordinate, b: ISquareCoordinate) => {
     }
 };
 
+export const customSortFnWithActions = (a: IGeneratedMoves, b: IGeneratedMoves) => {
+    return customSortFn(a.coord, b.coord)
+}
+
 export const getCoordsOnly = (generatedMoves: Array<IGeneratedMoves>) => {
     return generatedMoves.map(move => move.coord)
-} 
+}

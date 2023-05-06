@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { ChessPiecesName } from "@enums";
 import ChessLogic from "./ChessLogic";
 import { IGeneratedMoves } from "@shared/types";
-import { customSortFn, getCoordsOnly } from "../../shared/helperFunctionsForTest";
-
+import { customSortFn, customSortFnWithActions, getCoordsOnly } from "@helperFunctionsForTest";
 
 describe("ChessLogic class", () => {
+
     let boardConfig0 = [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
@@ -258,13 +258,9 @@ describe("ChessLogic class", () => {
                 column: 1,
             }) as Array<IGeneratedMoves>;
             const resultBlackKing = getCoordsOnly(resultBlackKingGenMoves)
-
             resultBlackKing.sort(customSortFn);
-
             expect(resultBlackKing).toEqual(
                 [
-                    { row: 0, column: 0 },
-                    { row: 0, column: 2 },
                     { row: 1, column: 1 },
                     { row: 1, column: 2 },
                 ].sort(customSortFn)
@@ -403,3 +399,34 @@ describe("ChessLogic class", () => {
         })
     });
 });
+
+describe("ChessLogic class, specific for king", () => {
+    let boardConfigKing = [
+        [null, null,null,null,null,null,null,null ],
+        [null, null,null,null,null,null,null,null ],
+        [null, null,null,null,null,null,null,null ],
+        [null, null,null,null,ChessPiecesName.whiteKing,null,null,null ],
+        [null, null,null,ChessPiecesName.blackQueen,null,null,null,null ],
+        [null, null,null,null,null,null,null,null ],
+        [null, null,null,null,null,ChessPiecesName.whiteQueen,ChessPiecesName.blackKing,null ],
+        [null, null,null,null,null,null,null, ]
+    ]
+
+    const chessifyKing = new ChessLogic(boardConfigKing)
+
+    it("correctly gives legal moves of whiteKing in boardConfigKing", () => {
+        const whiteKingResult = chessifyKing.generateMovesFor(chessifyKing.whiteKingPosition).sort(customSortFnWithActions)
+        expect(whiteKingResult).toEqual([
+            {coord: {row: 4, column: 3}},
+            {coord: {row: 3, column: 5}},
+            {coord: {row: 2, column: 4}}
+        ].sort(customSortFnWithActions))
+
+        const blackKingResult = chessifyKing.generateMovesFor(chessifyKing.blackKingPosition).sort(customSortFnWithActions)
+        expect(blackKingResult).toEqual([
+            {coord: {row:6, column: 5}},
+            {coord: {row:7, column: 7}},
+            {coord: {row:5, column: 7}},
+        ].sort(customSortFnWithActions))
+    })
+})
