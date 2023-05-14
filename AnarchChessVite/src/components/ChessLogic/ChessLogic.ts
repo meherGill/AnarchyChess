@@ -2,6 +2,7 @@ import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enu
 import { IChessPiece, IGeneratedMoves, IMove, IMoveHistory, IMoveType, ISquareCoordinate } from "@shared/types";
 import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves, returnCastlingCoord } from "./moveGeneratingFunctions";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
+import { makeDeepCopyOfPiece } from "../../shared/utilityFunctions";
 
 export const getChessPieceNameFor = (chessPieceType: TypeOfChessPiece, color: PlayerColor) : ChessPiecesName => {
     return `${color}_${chessPieceType}` as ChessPiecesName
@@ -40,7 +41,7 @@ export const returnOpponentColor = (chessPiece: ChessPiecesName) : PlayerColor =
         return PlayerColor.white
     }
 
-}
+};
 
 export const _getPieceOnCoord = (coord: ISquareCoordinate, currentBoard:  Array<Array<IChessPiece | null>>): IChessPiece | null => {
     return currentBoard[coord.row][coord.column];
@@ -49,7 +50,7 @@ export const _getPieceOnCoord = (coord: ISquareCoordinate, currentBoard:  Array<
 export const _setPieceOnCoord = (coord: ISquareCoordinate, pieceToSet: IChessPiece | null, currentBoard: Array<Array<IChessPiece | null>> ) : boolean => {
     currentBoard[coord.row][coord.column] = pieceToSet
     return true
-}
+};
 
 export const returnTypeAndColorOfPiece = (piece: ChessPiecesName) => {
     return {
@@ -376,7 +377,6 @@ class ChessLogic {
     }
 
     
-
     moveWithAction = (coordFrom: ISquareCoordinate, {coord, action} : IGeneratedMoves) : boolean => {
         let leftCoord: ISquareCoordinate
         let rightCoord: ISquareCoordinate
@@ -434,9 +434,14 @@ class ChessLogic {
                     rooksNewCoord = {...coordTo, column: coordTo.column+1}
                 }
 
+                const oldRookPiece : IChessPiece = makeDeepCopyOfPiece(_getPieceOnCoord(rooksOldCoord, this.currentBoard)) as IChessPiece
+                const oldKingPiece : IChessPiece = makeDeepCopyOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)) as IChessPiece
+               
                 this.coordsAffectedWithPrevValue = [
-                    {coord: rooksOldCoord , value: {..._getPieceOnCoord(rooksOldCoord, this.currentBoard)} as IChessPiece},
-                    {coord: coordFrom , value:{..._getPieceOnCoord(coordFrom, this.currentBoard)} as IChessPiece}
+                    {coord: rooksOldCoord , value: oldRookPiece},
+                    {coord: coordFrom , value: oldKingPiece},
+                    {coord: rooksNewCoord, value: null},
+                    {coord: coordTo, value: null}
                 ]
 
                 this._moveCoordOnly(coordFrom, coordTo)
@@ -477,6 +482,7 @@ class ChessLogic {
                 break;
         }
 
+        // if playing the move caused king to be in check then return false and undo board state
         if (this._isKingInCheck(getChessPieceNameFor(TypeOfChessPiece.King, this.turnToPlay) as ChessPiecesName.blackKing | ChessPiecesName.whiteKing).inCheck){
             this._undoLastMove()
             return false
@@ -484,7 +490,6 @@ class ChessLogic {
         else{
             return true
         }
-
     }
 }
 
