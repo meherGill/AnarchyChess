@@ -1,5 +1,5 @@
-import { ChessPiecesName, PlayerColor, TypeOfChessPiece } from "@enums";
-import { IChessPiece, IGeneratedMoves, IMoveHistory, ISquareCoordinate } from "@shared/types";
+import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enums";
+import { IChessPiece, IGeneratedMoves, IMove, IMoveHistory, IMoveType, ISquareCoordinate } from "@shared/types";
 import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves, returnCastlingCoord } from "./moveGeneratingFunctions";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
 
@@ -10,6 +10,7 @@ export const getChessPieceNameFor = (chessPieceType: TypeOfChessPiece, color: Pl
 export const checkIfCoordInBound = (coord: ISquareCoordinate): boolean => {
     let rowValid = false;
     let colValid = false;
+
     if (coord.row >= 0 && coord.row < 8) {
         rowValid = true;
     }
@@ -41,11 +42,11 @@ export const returnOpponentColor = (chessPiece: ChessPiecesName) : PlayerColor =
 
 }
 
-export const getPieceOnCoord = (coord: ISquareCoordinate, currentBoard:  Array<Array<IChessPiece | null>>): IChessPiece | null => {
+export const _getPieceOnCoord = (coord: ISquareCoordinate, currentBoard:  Array<Array<IChessPiece | null>>): IChessPiece | null => {
     return currentBoard[coord.row][coord.column];
 };
 
-export const setPieceOnCoord = (coord: ISquareCoordinate, pieceToSet: IChessPiece | null, currentBoard: Array<Array<IChessPiece | null>> ) : boolean => {
+export const _setPieceOnCoord = (coord: ISquareCoordinate, pieceToSet: IChessPiece | null, currentBoard: Array<Array<IChessPiece | null>> ) : boolean => {
     currentBoard[coord.row][coord.column] = pieceToSet
     return true
 }
@@ -77,8 +78,17 @@ class ChessLogic {
     whiteHasCastled: boolean = false
     blackHasCastled: boolean = false
 
-
     // forcedMoves:
+    forcedMoves: Array<IMoveType> = []
+
+    //this object will store the last move update, and it uses the stored values to undo the move
+    lastboardState: Array<Array<IChessPiece | null>> = []
+
+    coordsAffectedWithPrevValue: Array<{coord: ISquareCoordinate, value: IChessPiece | null}> = []
+
+    //memoizedMoves
+    memoizedMovesForEachPiece: any = {}
+
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
         this.currentBoard = [];
         for (let row = 0; row < 8; row++) {
@@ -87,6 +97,12 @@ class ChessLogic {
                 this.currentBoard[row].push(null);
             }
         }
+
+        //populating memoizedMovesForEachPiece
+        Object.values(TypeOfChessPiece).forEach((chessPiece) => {
+            this.memoizedMovesForEachPiece[chessPiece] = []
+        })
+
         //recalculating the whiteKing position or blackKing posiiton based on provided board
         for (let row = 0; row < 8; row++) {
             for (let column = 0; column < 8; column++) {
@@ -115,7 +131,7 @@ class ChessLogic {
         }
     }
 
-    isKingInCheck = (king : ChessPiecesName.blackKing | ChessPiecesName.whiteKing) => {
+    _isKingInCheck = (king : ChessPiecesName.blackKing | ChessPiecesName.whiteKing) => {
         let coordsForKing: ISquareCoordinate
         if (king === ChessPiecesName.blackKing){
             coordsForKing = this.blackKingPosition
@@ -128,7 +144,75 @@ class ChessLogic {
         return result
     }
 
-    generateMovesFor = (
+    _isEnPassantPresentForPlayerAndWhere = (playerColor: PlayerColor) : boolean | Array<IMove> => {
+        let lastPlayCoordToCheckFor: IMoveHistory | undefined
+        let coloredPawn: ChessPiecesName;
+        let expectedRowFrom: number;
+        let expectedRowTo: number;
+        let potentialEnPassantableCoordinate_row: number;
+
+        let pawnsThatCanEnPassantArr : Array<ISquareCoordinate> = []
+        if (playerColor === PlayerColor.white){
+            lastPlayCoordToCheckFor = this.lastBlackMovePlayedArr.at(-1)
+            coloredPawn = ChessPiecesName.blackPawn
+            expectedRowFrom = 1
+            expectedRowTo = 3
+            potentialEnPassantableCoordinate_row = 2
+        }
+        else{
+            lastPlayCoordToCheckFor = this.lastWhiteMovePlayedArr.at(-1)
+            coloredPawn = ChessPiecesName.whitePawn
+            expectedRowFrom = 6
+            expectedRowTo = 4
+            potentialEnPassantableCoordinate_row = 5
+        }
+
+        if (!lastPlayCoordToCheckFor){
+            return false
+        }
+
+        //checks if opponent pawn moved two pieces from its starting square
+        if (!(lastPlayCoordToCheckFor?.piece === coloredPawn &&
+            lastPlayCoordToCheckFor?.from.row === expectedRowFrom &&
+            lastPlayCoordToCheckFor?.to.row === expectedRowTo)){
+               
+            return false
+        }
+
+        //get two horizontally adjacent squares next to the pawn that moved two spaces
+        const leftCoord : ISquareCoordinate = {...lastPlayCoordToCheckFor.to, column: lastPlayCoordToCheckFor.to.column - 1}
+        const rightCoord : ISquareCoordinate = {...lastPlayCoordToCheckFor.to, column: lastPlayCoordToCheckFor.to.column + 1}
+
+        let pieceOnLeftCoord: IChessPiece| null = null;
+        let pieceOnRightCoord: IChessPiece| null = null;
+        if (checkIfCoordInBound(leftCoord)){
+            pieceOnLeftCoord = _getPieceOnCoord(leftCoord, this.currentBoard)
+        }
+        if (checkIfCoordInBound(rightCoord)){
+            pieceOnRightCoord = _getPieceOnCoord(rightCoord, this.currentBoard)
+        }
+        if (pieceOnLeftCoord?.name === getChessPieceNameFor(TypeOfChessPiece.Pawn, playerColor)){
+            pawnsThatCanEnPassantArr.push(leftCoord)
+        }
+        if (pieceOnRightCoord?.name === getChessPieceNameFor(TypeOfChessPiece.Pawn, playerColor)){
+            pawnsThatCanEnPassantArr.push(rightCoord)
+        }
+        
+        if (pawnsThatCanEnPassantArr.length > 0){
+            return pawnsThatCanEnPassantArr.map((pawnCoord: ISquareCoordinate) => {
+                return {
+                    from: pawnCoord,
+                    to: {
+                        row: potentialEnPassantableCoordinate_row, 
+                        column: lastPlayCoordToCheckFor!.to.column
+                        }
+                }
+            })
+        }
+        return false
+    }
+
+    _generateMovesFor = (
         coord: ISquareCoordinate
     ): Array<IGeneratedMoves>  => {
         if (this.currentBoard[coord.row][coord.column]) {
@@ -145,8 +229,7 @@ class ChessLogic {
                         if en-passant available, en passant forced (done)
                         pawn promotion: get knight boost if promoted to knight
                     */
-
-                    returnCoordinatesArray = pawnLikeMoves(coord, this.currentBoard, this.lastBlackMovePlayedArr, this.lastWhiteMovePlayedArr)
+                    returnCoordinatesArray = pawnLikeMoves({ coord, currentBoard: this.currentBoard, lastBlackMovePlayedArr: this.lastBlackMovePlayedArr, lastWhiteMovePlayedArr: this.lastWhiteMovePlayedArr })
                     break;
 
                 case ChessPiecesName.blackKing:
@@ -171,17 +254,16 @@ class ChessLogic {
                         the whiteQueen's threat is not there and the square will be counted as as safe square for the king, 
                         in the absence of any other threats even though it is not
                     */  
-                    const kingChessPiece = getPieceOnCoord(coord, this.currentBoard)
-                    setPieceOnCoord(coord, null, this.currentBoard)
+                    const kingChessPiece = _getPieceOnCoord(coord, this.currentBoard)
+                    _setPieceOnCoord(coord, null, this.currentBoard)
                     const allLegalKingMoves = allKingsMoves.filter(generatedMove => {
                         const coord = generatedMove.coord
-                        const action = generatedMove.action
                         
                         return !checkIfGivenPositionIsInCheck(coord, colorOfPPiece, this.currentBoard).inCheck
                     })
                     
                     //replacing the empty square used for the previous square back to a king piece
-                    setPieceOnCoord(coord, kingChessPiece, this.currentBoard)
+                    _setPieceOnCoord(coord, kingChessPiece, this.currentBoard)
                     returnCoordinatesArray = allLegalKingMoves
                     //if its white king and it hasnt castled or if its black king that hasnt castled, add castling coords
                     if ((colorOfPPiece === PlayerColor.white && !this.whiteHasCastled) 
@@ -210,7 +292,7 @@ class ChessLogic {
                     returnCoordinatesArray = [...vanillaBishopLikeMoves(coord, this.currentBoard)]
                     const ilVaticanoChecker = generateIlVaticano(coord, this.currentBoard);
                     if (ilVaticanoChecker.ilVaticanoPossible){
-                        returnCoordinatesArray = [...ilVaticanoChecker.secondBishopLikeCoords]
+                        returnCoordinatesArray = [...returnCoordinatesArray, ...ilVaticanoChecker.secondBishopLikeCoords]
                     }
                     break;
 
@@ -254,6 +336,156 @@ class ChessLogic {
             return [];
         }
     };
+
+    _updateForcedMovesFor = (playerColor: PlayerColor) => {   
+        // in the order of precedance
+        // - en passant
+        this.forcedMoves = []
+        let enPassantMoves = this._isEnPassantPresentForPlayerAndWhere(playerColor)
+        if (enPassantMoves){
+            enPassantMoves = enPassantMoves as IMove[]
+            const moveActions : IMoveType[] = enPassantMoves.map(enPassantMove => {
+                return {...enPassantMove, action: MoveAction.enPassant}
+            })
+            this.forcedMoves = [...this.forcedMoves, ...moveActions]
+            return
+        }
+    }   
+
+    _createLastBoardStateCopy = () => {
+        let currentStateCopyArray : Array<Array<IChessPiece | null>> = []
+        for (let row = 0; row < this.currentBoard.length; row++){
+            currentStateCopyArray.push([])
+            for (let column= 0; column < this.currentBoard[row].length; column++){
+                const chessPieceCopy = {...this.currentBoard[row][column]} as IChessPiece
+                currentStateCopyArray[row].push(chessPieceCopy)
+            }
+        }
+    }
+
+    _moveCoordOnly = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate) => {
+        this.currentBoard[coordTo.row][coordTo.column] = this.currentBoard[coordFrom.row][coordFrom.column]
+        this.currentBoard[coordFrom.row][coordFrom.column] = null
+        this.currentBoard[coordTo.row][coordTo.column]!.lastPosition = {row: coordFrom.row, column: coordFrom.column}
+    }
+
+    _undoLastMove = () => {
+        for (let {coord, value} of this.coordsAffectedWithPrevValue){
+            this.currentBoard[coord.row][coord.column] = value
+        }
+    }
+
+    
+
+    moveWithAction = (coordFrom: ISquareCoordinate, {coord, action} : IGeneratedMoves) : boolean => {
+        let leftCoord: ISquareCoordinate
+        let rightCoord: ISquareCoordinate
+        this.coordsAffectedWithPrevValue = []
+        let coordTo = coord
+
+        switch(action){
+            case MoveAction.ilVaticano:
+ 
+                if (coordFrom.column < coordTo.column){
+                    leftCoord = coordFrom
+                    rightCoord = coordTo
+                }
+                else{
+                    leftCoord = coordTo
+                    rightCoord = coordFrom
+                }
+
+                const inBetweenCoord1 = {
+                    row: leftCoord.row,
+                    column: leftCoord.column+1
+                }
+
+                const inBetweenCoord2 = {
+                    row: leftCoord.row,
+                    column: leftCoord.column+2
+                }
+
+                const pieceOnFrom = _getPieceOnCoord(coordFrom, this.currentBoard)
+                const pieceOnTo = _getPieceOnCoord(coordTo, this.currentBoard)
+
+                this.coordsAffectedWithPrevValue = [
+                    {coord: inBetweenCoord1 , value: _getPieceOnCoord(inBetweenCoord1, this.currentBoard)},
+                    {coord: inBetweenCoord2 , value: _getPieceOnCoord(inBetweenCoord2, this.currentBoard)},
+                    {coord: coordFrom, value: {name: pieceOnFrom!.name, lastPosition: pieceOnFrom!.lastPosition ? {...pieceOnFrom!.lastPosition} : null} as IChessPiece},
+                    {coord: coordTo, value: {name: pieceOnTo!.name, lastPosition: pieceOnTo!.lastPosition ? {...pieceOnTo!.lastPosition} : null} as IChessPiece}
+                ]
+
+                this.currentBoard[inBetweenCoord1.row][inBetweenCoord1.column] = null
+                this.currentBoard[inBetweenCoord2.row][inBetweenCoord2.column] = null
+
+                this.currentBoard[coordFrom.row][coordFrom.column]!.lastPosition = coordTo
+                this.currentBoard[coordTo.row][coordTo.column]!.lastPosition = coordFrom
+                break;
+
+            case MoveAction.horizontalCastling:
+                let rooksNewCoord: ISquareCoordinate
+                let rooksOldCoord: ISquareCoordinate
+                if (coordFrom.column < coordTo.column){
+                    rooksOldCoord = {...coordTo, column: 7}
+                    rooksNewCoord = {...coordTo, column: coordTo.column-1}
+                }
+                else{
+                    rooksOldCoord = {...coordTo, column: 0}
+                    rooksNewCoord = {...coordTo, column: coordTo.column+1}
+                }
+
+                this.coordsAffectedWithPrevValue = [
+                    {coord: rooksOldCoord , value: {..._getPieceOnCoord(rooksOldCoord, this.currentBoard)} as IChessPiece},
+                    {coord: coordFrom , value:{..._getPieceOnCoord(coordFrom, this.currentBoard)} as IChessPiece}
+                ]
+
+                this._moveCoordOnly(coordFrom, coordTo)
+                this._moveCoordOnly(rooksOldCoord, rooksNewCoord)
+                break;
+
+            case MoveAction.enPassant:
+                let passantedPieceCoord : ISquareCoordinate = {row: coordFrom.row, column: coordTo.column}
+                this.currentBoard[passantedPieceCoord.row][passantedPieceCoord.column] = null
+
+                this.coordsAffectedWithPrevValue = [
+                    {coord: passantedPieceCoord , value: _getPieceOnCoord(passantedPieceCoord, this.currentBoard)},
+                    {coord: coordFrom , value: _getPieceOnCoord(coordFrom, this.currentBoard)}
+                ]
+
+                this._moveCoordOnly(coordFrom, coordTo)
+                break;
+
+            case MoveAction.knightBoost:
+                const pieceColor = returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name)
+
+                this.coordsAffectedWithPrevValue = [
+                    {coord: coordFrom , value: _getPieceOnCoord(coordFrom, this.currentBoard)},
+                    {coord: coordTo , value: _getPieceOnCoord(coordTo, this.currentBoard)}
+                ]
+
+                this._moveCoordOnly(coordFrom, coordTo)
+                this.currentBoard[coordTo.row][coordTo.column] = {name: getChessPieceNameFor(TypeOfChessPiece.Knight, pieceColor), lastPosition: null}
+                break;
+
+            default:
+                this.coordsAffectedWithPrevValue = [
+                    {coord: coordFrom , value: _getPieceOnCoord(coordFrom, this.currentBoard)},
+                    {coord: coordTo , value: _getPieceOnCoord(coordTo, this.currentBoard)}
+                ]
+                this._moveCoordOnly(coordFrom, coordTo)
+
+                break;
+        }
+
+        if (this._isKingInCheck(getChessPieceNameFor(TypeOfChessPiece.King, this.turnToPlay) as ChessPiecesName.blackKing | ChessPiecesName.whiteKing).inCheck){
+            this._undoLastMove()
+            return false
+        }
+        else{
+            return true
+        }
+
+    }
 }
 
 export default ChessLogic;

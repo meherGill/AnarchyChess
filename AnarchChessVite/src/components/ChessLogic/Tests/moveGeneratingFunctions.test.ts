@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { ChessPiecesName, MoveAction } from "@enums";
-import ChessLogic from "./ChessLogic";
-import { vanillaBishopLikeMoves, knightLikeMoves, rookLikeMoves, generateIlVaticano } from "./moveGeneratingFunctions";
-import { customSortFn, getCoordsOnly } from "../../shared/helperFunctionsForTest";
+import ChessLogic from "../ChessLogic";
+import { vanillaBishopLikeMoves, knightLikeMoves, rookLikeMoves, generateIlVaticano } from "../moveGeneratingFunctions";
+import { customSortFn, getCoordsOnly } from "../../../shared/helperFunctionsForTest";
 
 
 describe("ChessLogic class", () => {

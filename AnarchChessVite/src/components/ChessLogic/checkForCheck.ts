@@ -1,12 +1,12 @@
-import { IChessPiece, ISquareCoordinate, IilVaticanoReturnType } from "@shared/types";
-import { checkIfCoordInBound, getChessPieceNameFor, returnColorOfPiece, returnOpponentColor, getPieceOnCoord, returnTypeAndColorOfPiece, setPieceOnCoord } from "./ChessLogic";
+import { IChessPiece, ISquareCoordinate } from "@shared/types";
+import { checkIfCoordInBound, getChessPieceNameFor, returnColorOfPiece, _getPieceOnCoord, _setPieceOnCoord } from "./ChessLogic";
 import { PlayerColor, TypeOfChessPiece } from "@enums";
 import { checkIfPieceAtCoord, kingLikeMoves, knightLikeMoves, rookLikeMoves, vanillaBishopLikeMoves } from "./moveGeneratingFunctions";
 
 export const checkIfGivenPositionIsInCheck = (givenPosition: ISquareCoordinate, friendlyColor: PlayerColor, currentBoard: Array<Array<IChessPiece| null>>) : {inCheck: boolean, threatAt: ISquareCoordinate | null} => {
         
         let checkToSwapValues = false
-        const valueAtGivenPosition = getPieceOnCoord(givenPosition, currentBoard)
+        const valueAtGivenPosition = _getPieceOnCoord(givenPosition, currentBoard)
 
         // if we are checking a 'check' on an EMPTY SQUARE, then we give it a fake piece, a pawn of that color
         // and we check how many pieces are threatening it
@@ -15,7 +15,7 @@ export const checkIfGivenPositionIsInCheck = (givenPosition: ISquareCoordinate, 
         if (!valueAtGivenPosition){
             checkToSwapValues = true
             const temoraryPieceToSet = getChessPieceNameFor(TypeOfChessPiece.Pawn, friendlyColor)
-            setPieceOnCoord(givenPosition, {name: temoraryPieceToSet, lastPosition: null}, currentBoard) 
+            _setPieceOnCoord(givenPosition, {name: temoraryPieceToSet, lastPosition: null}, currentBoard) 
         }
 
         const auxillaryFunction = () => {
@@ -147,14 +147,14 @@ export const checkIfGivenPositionIsInCheck = (givenPosition: ISquareCoordinate, 
         const returnVal = auxillaryFunction()
         if (checkToSwapValues){
             // this means, we swapped values on the square and now we swap them back
-            setPieceOnCoord(givenPosition, valueAtGivenPosition, currentBoard)
+            _setPieceOnCoord(givenPosition, valueAtGivenPosition, currentBoard)
         }
 
         return returnVal
 }
 
 export const checkIfGivenKingIsInCheck = (givenKingPosition: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : {inCheck: boolean, threatAt: ISquareCoordinate | null}=> {
-    const kingPiece = getPieceOnCoord(givenKingPosition, currentBoard)
+    const kingPiece = _getPieceOnCoord(givenKingPosition, currentBoard)
     
     if (kingPiece){
         const friendlyColor = returnColorOfPiece(kingPiece.name)

@@ -43,7 +43,7 @@ export enum ChessPiecesName {
 
 export enum MoveAction{
     enPassant = `EN_PASSANT`,
-    castling = `CASTLING`,
+    horizontalCastling = `HORIZONTAL_CASTLING`,
     ilVaticano = `IL_VATICANO`,
     knightBoost = `KNIGHT_BOOST`
 }

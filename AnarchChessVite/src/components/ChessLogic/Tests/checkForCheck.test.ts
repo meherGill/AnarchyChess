@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {ChessPiecesName} from "@enums";
-import ChessLogic from "./ChessLogic";
+import ChessLogic from "../ChessLogic";
 
 describe("correctly detects if king is in check", () => {
     let boardConfigKingCheckFromQueen1 = [
@@ -105,19 +105,19 @@ describe("correctly detects if king is in check", () => {
     const chessifyKingCheckKing  = new ChessLogic(boardConfigKing)
 
     it ("correctly detects if king is in check from a queen" , () => {
-       const result1 = chessifyKingCheckQueen1.isKingInCheck(ChessPiecesName.whiteKing)
+       const result1 = chessifyKingCheckQueen1._isKingInCheck(ChessPiecesName.whiteKing)
        expect(result1).toEqual({
         inCheck: true,
         threatAt: {row: 2, column: 3}
        })
 
-       const result2 = chessifyKingCheckQueen2.isKingInCheck(ChessPiecesName.whiteKing)
+       const result2 = chessifyKingCheckQueen2._isKingInCheck(ChessPiecesName.whiteKing)
        expect(result2).toEqual({
         inCheck: true,
         threatAt: {row: 5, column: 1}
        })
 
-       const result3 = chessifyKingCheckQueen3.isKingInCheck(ChessPiecesName.whiteKing)
+       const result3 = chessifyKingCheckQueen3._isKingInCheck(ChessPiecesName.whiteKing)
        expect(result3).toEqual({
         inCheck: true,
         threatAt: {row: 7, column: 0}
@@ -125,13 +125,13 @@ describe("correctly detects if king is in check", () => {
     })
 
     it ("correctly detects if king is in check from a bishop", () => {
-        const result = chessifyKingCheckBishop.isKingInCheck(ChessPiecesName.blackKing)
+        const result = chessifyKingCheckBishop._isKingInCheck(ChessPiecesName.blackKing)
         expect(result).toEqual({
             inCheck: true,
             threatAt: {row: 4, column: 4}
         })
 
-        const notCheckedResult = chessifyKingCheckBishop.isKingInCheck(ChessPiecesName.whiteKing)
+        const notCheckedResult = chessifyKingCheckBishop._isKingInCheck(ChessPiecesName.whiteKing)
         expect(notCheckedResult).toEqual({
             inCheck: false,
             threatAt: null
@@ -139,7 +139,7 @@ describe("correctly detects if king is in check", () => {
     })
 
     it ("correctly detecs if king is in check from a knook", () => {
-        const result = chessifyKingCheckKnook.isKingInCheck(ChessPiecesName.whiteKing)
+        const result = chessifyKingCheckKnook._isKingInCheck(ChessPiecesName.whiteKing)
         expect(result).toEqual({
             inCheck: true,
             threatAt: {row: 4, column: 3}
@@ -147,8 +147,8 @@ describe("correctly detects if king is in check", () => {
     })
 
     it ("correctly detects if king is in check from  a pawn", () => {
-        const result1 = chessifyKingCheckPawn1.isKingInCheck(ChessPiecesName.blackKing)
-        const result2 = chessifyKingCheckPawn2.isKingInCheck(ChessPiecesName.whiteKing)
+        const result1 = chessifyKingCheckPawn1._isKingInCheck(ChessPiecesName.blackKing)
+        const result2 = chessifyKingCheckPawn2._isKingInCheck(ChessPiecesName.whiteKing)
 
         expect(result1).toEqual({
             inCheck: true,
@@ -162,8 +162,8 @@ describe("correctly detects if king is in check", () => {
     })
 
     it ("correctly detects if king is in check from another king" , () => {
-        const result1 = chessifyKingCheckKing.isKingInCheck(ChessPiecesName.whiteKing)
-        const result2 = chessifyKingCheckKing.isKingInCheck(ChessPiecesName.blackKing)
+        const result1 = chessifyKingCheckKing._isKingInCheck(ChessPiecesName.whiteKing)
+        const result2 = chessifyKingCheckKing._isKingInCheck(ChessPiecesName.blackKing)
 
         expect(result1).toEqual({
             inCheck: true,

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {ChessPiecesName, MoveAction} from "@enums";
-import ChessLogic from "./ChessLogic";
-import { getCoordsOnly, customSortFn, customSortFnWithActions } from "@helperFunctionsForTest";
+import ChessLogic from "../ChessLogic";
+import { customSortFnWithActions } from "@helperFunctionsForTest";
 
 
 describe("correctly check if king can castle or not", () => {
@@ -32,8 +32,8 @@ describe("correctly check if king can castle or not", () => {
     const chessifyBlackShortSideCastlingOnly = new ChessLogic(boardConfigBlackCastlingOnlyShortSide)
 
     it ("check for boardConfigAllCastling" ,() => {
-        const resultBlackKingGenMoves = chessifyAllCastling.generateMovesFor({row: 1, column: 4}).sort(customSortFnWithActions)
-        const resultWhiteKingGenMoves = chessifyAllCastling.generateMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
+        const resultBlackKingGenMoves = chessifyAllCastling._generateMovesFor({row: 1, column: 4}).sort(customSortFnWithActions)
+        const resultWhiteKingGenMoves = chessifyAllCastling._generateMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
 
         expect(resultBlackKingGenMoves).toEqual([
             { coord: { row: 2, column: 5 } },
@@ -44,8 +44,8 @@ describe("correctly check if king can castle or not", () => {
             { coord: { row: 0, column: 5 } },
             { coord: { row: 0, column: 3 } },
             { coord: { row: 0, column: 4 } },
-            { coord: { row: 1, column: 2 }, action: MoveAction.castling },
-            { coord: { row: 1, column: 6 }, action: MoveAction.castling }
+            { coord: { row: 1, column: 2 }, action: MoveAction.horizontalCastling },
+            { coord: { row: 1, column: 6 }, action: MoveAction.horizontalCastling }
           ].sort(customSortFnWithActions))
 
         expect(resultWhiteKingGenMoves).toEqual([
@@ -54,26 +54,26 @@ describe("correctly check if king can castle or not", () => {
             { coord: { row: 6, column: 4 } },
             { coord: { row: 7, column: 5 } },
             { coord: { row: 7, column: 3 } },
-            { coord: { row: 7, column: 2 }, action: MoveAction.castling },
-            { coord: { row: 7, column: 6 }, action: MoveAction.castling  }
+            { coord: { row: 7, column: 2 }, action: MoveAction.horizontalCastling },
+            { coord: { row: 7, column: 6 }, action: MoveAction.horizontalCastling  }
           ].sort(customSortFnWithActions))
     })
 
     it ("check for boardConfigBlackCastlingOnlyShortSide", () => {
-        const resultBlackKingGenMoves = chessifyBlackShortSideCastlingOnly.generateMovesFor({row: 0, column: 4}).sort(customSortFnWithActions)
+        const resultBlackKingGenMoves = chessifyBlackShortSideCastlingOnly._generateMovesFor({row: 0, column: 4}).sort(customSortFnWithActions)
         expect(resultBlackKingGenMoves).toEqual([
             {coord: {row: 0, column: 3}},
             {coord: {row: 0, column: 5}},
-            {coord: {row: 0, column: 6}, action: MoveAction.castling},
+            {coord: {row: 0, column: 6}, action: MoveAction.horizontalCastling},
         ].sort(customSortFnWithActions))
 
-        const resultWhiteKingGenMoves = chessifyBlackShortSideCastlingOnly.generateMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
-        console.log("whitey white ", resultWhiteKingGenMoves)
+        const resultWhiteKingGenMoves = chessifyBlackShortSideCastlingOnly._generateMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
         expect(resultWhiteKingGenMoves).toEqual([
             {coord: {row: 6, column: 3}},
             {coord: {row: 6, column: 5}},
             {coord: {row: 7, column: 3}},
             {coord: {row: 7, column: 5}},
         ].sort(customSortFnWithActions))
+        
     })
 })
