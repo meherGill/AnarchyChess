@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
-import {ChessPiecesName, MoveAction} from "@enums";
+import {ChessPiecesName, MoveAction, PlayerColor} from "@enums";
 import ChessLogic from "../ChessLogic";
+import { IGeneratedMoves } from "../../../shared/types";
 
 describe("it moves the pieces and performs the actions correctly" , ()=>{
     let boardConfigSimpleCase = [
@@ -25,7 +26,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
         [ChessPiecesName.whiteRook, null, null, ChessPiecesName.whiteKing, null, null, null, null],
     ];
 
-    let boardConfigPassant = [
+    let boardConfigPassant_twoStepsHardCoded = [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
         [ChessPiecesName.blackKing, null, null, null, null, null, null, null],
@@ -36,14 +37,29 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
         [null, null, null, null, null, null, null, null],
     ]
 
+    const boardConfigPassant_withoutHardcoding = [
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null,  ChessPiecesName.blackPawn, null, null],
+        [ChessPiecesName.blackKing, null, null, null, null, null, null, null],
+        [null, null, null, null, ChessPiecesName.whitePawn,null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteKing],
+        [null, null, null, null, null, null, null, null],
+    ]
+
     const chessifySimpleCase = new ChessLogic(boardConfigSimpleCase)
     const chessify_HCastling_KnightBoost_IlVaticano = new ChessLogic(boardConfigWith_HCastling_KnightBoost_IlVaticano)
-    const chessifyPassant = new ChessLogic(boardConfigPassant)
-    chessifyPassant.lastBlackMovePlayedArr = [{
+    const chessifyPassant_twoStepsHardCoded = new ChessLogic(boardConfigPassant_twoStepsHardCoded)
+    chessifyPassant_twoStepsHardCoded.lastBlackMovePlayedArr = [{
         piece: ChessPiecesName.blackPawn,
         from: {row: 1, column: 5},
         to: {row: 3, column: 5}
     }]
+    chessifyPassant_twoStepsHardCoded.currentBoard[3][5]!.lastPosition ={row: 1, column: 5}
+
+    const chessifyPassant_withoutHardcoding = new ChessLogic(boardConfigPassant_withoutHardcoding)
+    chessifyPassant_withoutHardcoding.turnToPlay = PlayerColor.black
 
     it ("correctly moves the pieces for chessifySimpleCase", () => {
         const coordFrom = {row:2, column: 0}
@@ -60,7 +76,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
         chessifySimpleCase._undoLastMove()
         
         expect(chessifySimpleCase.currentBoard[2]).toEqual([null, {name: ChessPiecesName.whitePawn, lastPosition: null}, null,null, null, null, null, null],)
-        expect(chessifySimpleCase.currentBoard[3]).toEqual([{name: ChessPiecesName.blackKing , lastPosition: coordFrom}, null, null,null, null, null, null, null],)
+        expect(chessifySimpleCase.currentBoard[3]).toEqual([{name: ChessPiecesName.blackKing , lastPosition: {row:2 , column: 0}}, null, null,null, null, null, null, null],)
     })
 
     it ("correctly performs ilvaticano", () => {
@@ -85,12 +101,15 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
         const knightBoostFrom = {row: 1, column: 1}
         chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(knightBoostFrom, {coord: {row: 2, column: 0}, action: MoveAction.knightBoost})
         expect(chessify_HCastling_KnightBoost_IlVaticano.currentBoard[2]).toEqual([{name: ChessPiecesName.whiteKnight, lastPosition: null}, null, null, null, null, null, null, null],)
+
+        chessify_HCastling_KnightBoost_IlVaticano._undoLastMove()
+        expect(chessify_HCastling_KnightBoost_IlVaticano.currentBoard[1]).toEqual( [null, {name: ChessPiecesName.whitePawn, lastPosition: null}, null, null, null, {name: ChessPiecesName.blackPawn, lastPosition: null}, null, null],)
     })
 
     it ("correctly performs action for passant" ,() => {
         const passantFrom = {row: 3,column: 4}
-        chessifyPassant.moveWithAction(passantFrom, {coord: {row: 2, column: 5}, action: MoveAction.enPassant})
-        expect(chessifyPassant.currentBoard[2]).toEqual([
+        chessifyPassant_twoStepsHardCoded.moveWithAction(passantFrom, {coord: {row: 2, column: 5}, action: MoveAction.enPassant})
+        expect(chessifyPassant_twoStepsHardCoded.currentBoard[2]).toEqual([
             { name: 'BLACK_KING', lastPosition: null },
             null,
             null,
@@ -100,5 +119,45 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
             null,
             null
           ])
+
+          chessifyPassant_twoStepsHardCoded._undoLastMove()
+          expect(chessifyPassant_twoStepsHardCoded.currentBoard[2]).toEqual([
+            { name: 'BLACK_KING', lastPosition: null },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ])
+          expect(chessifyPassant_twoStepsHardCoded.currentBoard[3]).toEqual([
+            null,
+            null,
+            null,
+            null,
+            { name: 'WHITE_PAWN', lastPosition: null },
+            { name: 'BLACK_PAWN', lastPosition: {row: 1, column: 5} },
+            null,
+            null
+          ])
     })
+
+    it ("does two steps of en-passant perfectly", () => {
+        let pieceToPlay = {row: 1, column: 5}
+        let moveList = chessifyPassant_withoutHardcoding._generateMovesFor(pieceToPlay)
+        const twoStepMove = moveList.filter((val) =>  val.coord.column === 5 && val.coord.row === 3).pop() as IGeneratedMoves
+        chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay,twoStepMove)
+
+        expect(chessifyPassant_withoutHardcoding.currentBoard[1]).toEqual( [null, null, null, null, null, null, null, null])
+
+        pieceToPlay = {row: 3, column: 4}
+        moveList = chessifyPassant_withoutHardcoding._generateMovesFor(pieceToPlay)
+        let nextMove = moveList.filter((val) => val.coord.column === 5 && val.coord.row === 2).pop() as IGeneratedMoves
+        chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay, nextMove)
+
+        expect(chessifyPassant_withoutHardcoding.currentBoard[2]).toEqual([{name : ChessPiecesName.blackKing, lastPosition: null}, null, null, null, null, {name : ChessPiecesName.whitePawn, lastPosition: pieceToPlay}, null, null],)
+    })
+
+    
 })

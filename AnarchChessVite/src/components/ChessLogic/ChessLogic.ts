@@ -90,6 +90,7 @@ class ChessLogic {
     //memoizedMoves
     memoizedMovesForEachPiece: any = {}
 
+    //
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
         this.currentBoard = [];
         for (let row = 0; row < 8; row++) {
@@ -130,6 +131,13 @@ class ChessLogic {
                 }
             }
         }
+    }
+
+    switchTurns = () => {
+        if (this.turnToPlay === PlayerColor.white) 
+            this.turnToPlay = PlayerColor.black
+        else
+            this.turnToPlay = PlayerColor.white
     }
 
     _isKingInCheck = (king : ChessPiecesName.blackKing | ChessPiecesName.whiteKing) => {
@@ -383,6 +391,8 @@ class ChessLogic {
         this.coordsAffectedWithPrevValue = []
         let coordTo = coord
 
+        this._updateForcedMovesFor(this.turnToPlay)
+
         switch(action){
             case MoveAction.ilVaticano:
  
@@ -405,14 +415,14 @@ class ChessLogic {
                     column: leftCoord.column+2
                 }
 
-                const pieceOnFrom = _getPieceOnCoord(coordFrom, this.currentBoard)
-                const pieceOnTo = _getPieceOnCoord(coordTo, this.currentBoard)
+                const pieceOnFrom = makeDeepCopyOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard))
+                const pieceOnTo = makeDeepCopyOfPiece(_getPieceOnCoord(coordTo, this.currentBoard))
 
                 this.coordsAffectedWithPrevValue = [
                     {coord: inBetweenCoord1 , value: _getPieceOnCoord(inBetweenCoord1, this.currentBoard)},
                     {coord: inBetweenCoord2 , value: _getPieceOnCoord(inBetweenCoord2, this.currentBoard)},
-                    {coord: coordFrom, value: {name: pieceOnFrom!.name, lastPosition: pieceOnFrom!.lastPosition ? {...pieceOnFrom!.lastPosition} : null} as IChessPiece},
-                    {coord: coordTo, value: {name: pieceOnTo!.name, lastPosition: pieceOnTo!.lastPosition ? {...pieceOnTo!.lastPosition} : null} as IChessPiece}
+                    {coord: coordFrom, value: pieceOnFrom},
+                    {coord: coordTo, value: pieceOnTo}
                 ]
 
                 this.currentBoard[inBetweenCoord1.row][inBetweenCoord1.column] = null
@@ -450,22 +460,23 @@ class ChessLogic {
 
             case MoveAction.enPassant:
                 let passantedPieceCoord : ISquareCoordinate = {row: coordFrom.row, column: coordTo.column}
-                this.currentBoard[passantedPieceCoord.row][passantedPieceCoord.column] = null
-
+                
                 this.coordsAffectedWithPrevValue = [
-                    {coord: passantedPieceCoord , value: _getPieceOnCoord(passantedPieceCoord, this.currentBoard)},
-                    {coord: coordFrom , value: _getPieceOnCoord(coordFrom, this.currentBoard)}
+                    {coord: passantedPieceCoord , value: makeDeepCopyOfPiece(_getPieceOnCoord(passantedPieceCoord, this.currentBoard))},
+                    {coord: coordFrom , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard))},
+                    {coord: coordTo, value: makeDeepCopyOfPiece(_getPieceOnCoord(coordTo, this.currentBoard))}
                 ]
-
+                
                 this._moveCoordOnly(coordFrom, coordTo)
+                this.currentBoard[passantedPieceCoord.row][passantedPieceCoord.column] = null
                 break;
 
             case MoveAction.knightBoost:
                 const pieceColor = returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name)
 
                 this.coordsAffectedWithPrevValue = [
-                    {coord: coordFrom , value: _getPieceOnCoord(coordFrom, this.currentBoard)},
-                    {coord: coordTo , value: _getPieceOnCoord(coordTo, this.currentBoard)}
+                    {coord: coordFrom , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard))},
+                    {coord: coordTo , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordTo, this.currentBoard))}
                 ]
 
                 this._moveCoordOnly(coordFrom, coordTo)
@@ -474,8 +485,8 @@ class ChessLogic {
 
             default:
                 this.coordsAffectedWithPrevValue = [
-                    {coord: coordFrom , value: _getPieceOnCoord(coordFrom, this.currentBoard)},
-                    {coord: coordTo , value: _getPieceOnCoord(coordTo, this.currentBoard)}
+                    {coord: coordFrom , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard))},
+                    {coord: coordTo , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordTo, this.currentBoard))}
                 ]
                 this._moveCoordOnly(coordFrom, coordTo)
 
@@ -488,6 +499,19 @@ class ChessLogic {
             return false
         }
         else{
+            const  moveHistoryElement = {
+                piece: _getPieceOnCoord(coord, this.currentBoard)!.name as ChessPiecesName,
+                from: coordFrom,
+                to: coord
+            }
+            if (this.turnToPlay === PlayerColor.white){
+                this.lastWhiteMovePlayedArr.push(moveHistoryElement)
+            }
+            else{
+                this.lastBlackMovePlayedArr.push(moveHistoryElement)
+            }
+            this.switchTurns() 
+
             return true
         }
     }
