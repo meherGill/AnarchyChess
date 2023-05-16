@@ -25,20 +25,20 @@ export enum TypeOfChessPiece{
 }
 
 export enum ChessPiecesName {
-    blackPawn = `${PlayerColor.black}_${TypeOfChessPiece.Pawn}`,
-    blackKnight = `${PlayerColor.black}_${TypeOfChessPiece.Knight}`,
-    blackBishop = `${PlayerColor.black}_${TypeOfChessPiece.Bishop}`,
-    blackRook = `${PlayerColor.black}_${TypeOfChessPiece.Rook}`,
-    blackQueen = `${PlayerColor.black}_${TypeOfChessPiece.Queen}`,
-    blackKing = `${PlayerColor.black}_${TypeOfChessPiece.King}`,
-    blackKnook = `${PlayerColor.black}_${TypeOfChessPiece.Knook}`,
-    whitePawn = `${PlayerColor.white}_${TypeOfChessPiece.Pawn}`,
-    whiteKnight = `${PlayerColor.white}_${TypeOfChessPiece.Knight}`,
-    whiteBishop = `${PlayerColor.white}_${TypeOfChessPiece.Bishop}`,
-    whiteRook = `${PlayerColor.white}_${TypeOfChessPiece.Rook}`,
-    whiteQueen = `${PlayerColor.white}_${TypeOfChessPiece.Queen}`,
-    whiteKing = `${PlayerColor.white}_${TypeOfChessPiece.King}`,
-    whiteKnook = `${PlayerColor.white}_${TypeOfChessPiece.Knook}`,
+    blackPawn = `BLACK_PAWN`,
+    blackKnight = `BLACK_KNIGHT`,
+    blackBishop = `BLACK_BISHOP`,
+    blackRook = `BLACK_ROOK`,
+    blackQueen = `BLACK_QUEEN`,
+    blackKing = `BLACK_KING`,
+    blackKnook = `BLACK_KNOOK`,
+    whitePawn = `WHITE_PAWN`,
+    whiteKnight = `WHITE_KNIGHT`,
+    whiteBishop = `WHITE_BISHOP`,
+    whiteRook = `WHITE_ROOK`,
+    whiteQueen = `WHITE_QUEEN`,
+    whiteKing = `WHITE_KING`,
+    whiteKnook = `WHITE_KNOOK`,
 }
 
 export enum MoveAction{

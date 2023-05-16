@@ -16,3 +16,9 @@ export const makeDeepCopyOfPiece = (piece: IChessPiece | null) : IChessPiece | n
         return null
     }
 }
+
+import { ISquareCoordinate } from "./types";
+
+export const areCoordsEqual = (coord1: ISquareCoordinate, coord2: ISquareCoordinate) => {
+    return ((coord1.row === coord2.row) && (coord1.column === coord2.column))
+}

@@ -58,11 +58,12 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
     }]
     chessifyPassant_twoStepsHardCoded.currentBoard[3][5]!.lastPosition ={row: 1, column: 5}
 
-    const chessifyPassant_withoutHardcoding = new ChessLogic(boardConfigPassant_withoutHardcoding)
+    let chessifyPassant_withoutHardcoding = new ChessLogic(boardConfigPassant_withoutHardcoding)
     chessifyPassant_withoutHardcoding.turnToPlay = PlayerColor.black
 
     it ("correctly moves the pieces for chessifySimpleCase", () => {
         const coordFrom = {row:2, column: 0}
+        chessifySimpleCase.turnToPlay = PlayerColor.black
         chessifySimpleCase.moveWithAction(coordFrom, {coord: {row: 3, column: 0}})
         expect(chessifySimpleCase.currentBoard[2]).toEqual([null, {name: ChessPiecesName.whitePawn, lastPosition: null}, null,null, null, null, null, null],)
         expect(chessifySimpleCase.currentBoard[3]).toEqual([{name: ChessPiecesName.blackKing , lastPosition: coordFrom}, null, null,null, null, null, null, null],)
@@ -70,6 +71,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
         coordFrom.row = 3
         coordFrom.column = 0
 
+        chessifySimpleCase.turnToPlay = PlayerColor.black
         chessifySimpleCase.moveWithAction(coordFrom, {coord: {row: 2, column: 1}})
         expect(chessifySimpleCase.currentBoard[2]).toEqual([null, {name: ChessPiecesName.blackKing, lastPosition: coordFrom}, null,null, null, null, null, null])
 
@@ -90,6 +92,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
     it ("correctly does for castling", () => {
         const castlingFrom = {row: 7, column: 3}
+        chessify_HCastling_KnightBoost_IlVaticano.turnToPlay = PlayerColor.white
         chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(castlingFrom, {coord: {row: 7, column: 1}, action: MoveAction.horizontalCastling})
         expect(chessify_HCastling_KnightBoost_IlVaticano.currentBoard[7]).toEqual([null,{name: ChessPiecesName.whiteKing, lastPosition: castlingFrom}, {name: ChessPiecesName.whiteRook, lastPosition: {row: 7, column: 0}}, null, null, null, null, null],)
 
@@ -99,6 +102,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
     it ("correctly promotes pawn for knight boost and gives it the boost", () => {
         const knightBoostFrom = {row: 1, column: 1}
+        chessify_HCastling_KnightBoost_IlVaticano.turnToPlay = PlayerColor.white
         chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(knightBoostFrom, {coord: {row: 2, column: 0}, action: MoveAction.knightBoost})
         expect(chessify_HCastling_KnightBoost_IlVaticano.currentBoard[2]).toEqual([{name: ChessPiecesName.whiteKnight, lastPosition: null}, null, null, null, null, null, null, null],)
 
@@ -158,6 +162,22 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
         expect(chessifyPassant_withoutHardcoding.currentBoard[2]).toEqual([{name : ChessPiecesName.blackKing, lastPosition: null}, null, null, null, null, {name : ChessPiecesName.whitePawn, lastPosition: pieceToPlay}, null, null],)
     })
+})
 
-    
+describe('it returns false when there are no valid moves to be made', () => {
+    const boardConfigPassant_withoutHardcoding = [
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null,  ChessPiecesName.blackPawn, null, null],
+        [ChessPiecesName.blackKing, null, null, null, null, null, null, null],
+        [null, null, null, null, ChessPiecesName.whitePawn,null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteKing],
+        [null, null, null, null, null, null, null, null],
+    ]
+    const chessify = new ChessLogic(boardConfigPassant_withoutHardcoding)
+    chessify.turnToPlay = PlayerColor.black
+    chessify.moveWithAction({row: 1, column: 5}, {coord: {row: 3, column: 5}})
+    const result = chessify.moveWithAction({row: 3, column: 4}, {coord: {row: 2, column: 4}})
+    expect(result).toEqual(false)
 })

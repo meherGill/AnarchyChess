@@ -2,7 +2,7 @@ import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enu
 import { IChessPiece, IGeneratedMoves, IMove, IMoveHistory, IMoveType, ISquareCoordinate } from "@shared/types";
 import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves, returnCastlingCoord } from "./moveGeneratingFunctions";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
-import { makeDeepCopyOfPiece } from "../../shared/utilityFunctions";
+import { makeDeepCopyOfPiece, areCoordsEqual } from "@shared/utilityFunctions";
 
 export const getChessPieceNameFor = (chessPieceType: TypeOfChessPiece, color: PlayerColor) : ChessPiecesName => {
     return `${color}_${chessPieceType}` as ChessPiecesName
@@ -90,7 +90,9 @@ class ChessLogic {
     //memoizedMoves
     memoizedMovesForEachPiece: any = {}
 
-    //
+    //varaible to see if king is in check
+    isKingInCheck: boolean = false
+
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
         this.currentBoard = [];
         for (let row = 0; row < 8; row++) {
@@ -385,13 +387,33 @@ class ChessLogic {
     }
 
     
-    moveWithAction = (coordFrom: ISquareCoordinate, {coord, action} : IGeneratedMoves) : boolean => {
+    moveWithAction = (coordFrom: ISquareCoordinate, {coord: coordTo, action} : IGeneratedMoves) : boolean => {
         let leftCoord: ISquareCoordinate
         let rightCoord: ISquareCoordinate
         this.coordsAffectedWithPrevValue = []
-        let coordTo = coord
-
         this._updateForcedMovesFor(this.turnToPlay)
+        
+        let exitEarly = false
+
+        //check if coordFrom belongs to wrong turn to play:
+        if (returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name) !== this.turnToPlay){
+            return false
+        }
+        if (this.forcedMoves.length > 0){
+            exitEarly = true
+            for (let forcedMove of this.forcedMoves){
+                if (
+                    areCoordsEqual(coordFrom, forcedMove.from)
+                    &&
+                    areCoordsEqual(coordTo, forcedMove.to)
+                ){
+                    exitEarly = false
+                }
+            }
+        }
+        if (exitEarly){
+            return false
+        }
 
         switch(action){
             case MoveAction.ilVaticano:
@@ -500,9 +522,9 @@ class ChessLogic {
         }
         else{
             const  moveHistoryElement = {
-                piece: _getPieceOnCoord(coord, this.currentBoard)!.name as ChessPiecesName,
+                piece: _getPieceOnCoord(coordTo, this.currentBoard)!.name as ChessPiecesName,
                 from: coordFrom,
-                to: coord
+                to: coordTo
             }
             if (this.turnToPlay === PlayerColor.white){
                 this.lastWhiteMovePlayedArr.push(moveHistoryElement)
@@ -511,8 +533,8 @@ class ChessLogic {
                 this.lastBlackMovePlayedArr.push(moveHistoryElement)
             }
             this.switchTurns() 
-
             return true
+
         }
     }
 }
