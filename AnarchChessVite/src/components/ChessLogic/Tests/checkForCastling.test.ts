@@ -32,8 +32,8 @@ describe("correctly check if king can castle or not", () => {
     const chessifyBlackShortSideCastlingOnly = new ChessLogic(boardConfigBlackCastlingOnlyShortSide)
 
     it ("check for boardConfigAllCastling" ,() => {
-        const resultBlackKingGenMoves = chessifyAllCastling._generateMovesFor({row: 1, column: 4}).sort(customSortFnWithActions)
-        const resultWhiteKingGenMoves = chessifyAllCastling._generateMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
+        const resultBlackKingGenMoves = chessifyAllCastling._generatePseduoLegalMovesFor({row: 1, column: 4}).sort(customSortFnWithActions)
+        const resultWhiteKingGenMoves = chessifyAllCastling._generatePseduoLegalMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
 
         expect(resultBlackKingGenMoves).toEqual([
             { coord: { row: 2, column: 5 } },
@@ -60,14 +60,14 @@ describe("correctly check if king can castle or not", () => {
     })
 
     it ("check for boardConfigBlackCastlingOnlyShortSide", () => {
-        const resultBlackKingGenMoves = chessifyBlackShortSideCastlingOnly._generateMovesFor({row: 0, column: 4}).sort(customSortFnWithActions)
+        const resultBlackKingGenMoves = chessifyBlackShortSideCastlingOnly._generatePseduoLegalMovesFor({row: 0, column: 4}).sort(customSortFnWithActions)
         expect(resultBlackKingGenMoves).toEqual([
             {coord: {row: 0, column: 3}},
             {coord: {row: 0, column: 5}},
             {coord: {row: 0, column: 6}, action: MoveAction.horizontalCastling},
         ].sort(customSortFnWithActions))
 
-        const resultWhiteKingGenMoves = chessifyBlackShortSideCastlingOnly._generateMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
+        const resultWhiteKingGenMoves = chessifyBlackShortSideCastlingOnly._generatePseduoLegalMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
         expect(resultWhiteKingGenMoves).toEqual([
             {coord: {row: 6, column: 3}},
             {coord: {row: 6, column: 5}},

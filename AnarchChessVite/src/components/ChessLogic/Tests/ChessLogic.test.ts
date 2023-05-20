@@ -178,12 +178,12 @@ describe("ChessLogic class", () => {
     });
     describe("correctly returns the validMoves for a pawn", () => {
         it("correctly displays moves for black pawn in boardConfigA", () => {
-            const resultGenMoves = chessifyA._generateMovesFor({ row: 1, column: 2 });
+            const resultGenMoves = chessifyA._generatePseduoLegalMovesFor({ row: 1, column: 2 });
             const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([{ row: 2, column: 2 }]);
         });
         it("correctly displays moves for a white pawn in boardConfigA", () => {
-            const resultGenMoves = chessifyA._generateMovesFor({ row: 6, column: 1 });
+            const resultGenMoves = chessifyA._generatePseduoLegalMovesFor({ row: 6, column: 1 });
             const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([
                 { row: 5, column: 1 },
@@ -191,17 +191,17 @@ describe("ChessLogic class", () => {
             ]);
         });
         it("correctly displays moves for black pawn in boardConfigB", () => {
-            const resultGenMoves = chessifyB._generateMovesFor({ row: 1, column: 2 });
+            const resultGenMoves = chessifyB._generatePseduoLegalMovesFor({ row: 1, column: 2 });
             const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([]);
         });
         it("correctly displays moves for a rank 7 white pawn in boardConfigB", () => {
-            const resultGenMoves = chessifyB._generateMovesFor({ row: 1, column: 2 })
+            const resultGenMoves = chessifyB._generatePseduoLegalMovesFor({ row: 1, column: 2 })
             const result = getCoordsOnly(resultGenMoves);
             expect(result).toEqual([]);
         });
         it("correctly displays moves for white pawn in boardConfigC", () => {
-            const resultGenMoves = chessifyC._generateMovesFor({ row: 6, column: 1 });
+            const resultGenMoves = chessifyC._generatePseduoLegalMovesFor({ row: 6, column: 1 });
             const result = getCoordsOnly(resultGenMoves)
             expect(result).toEqual([
                 { row: 5, column: 1 },
@@ -210,7 +210,7 @@ describe("ChessLogic class", () => {
             ]);
         });
         it("correctly displays only move passant for pawn in boardConfigPassant", () => {
-            const resultGenMoves = chessifyPassant._generateMovesFor({
+            const resultGenMoves = chessifyPassant._generatePseduoLegalMovesFor({
                 row: 3,
                 column: 0,
             });
@@ -220,7 +220,7 @@ describe("ChessLogic class", () => {
     });
     describe("correctly returns validMoves for a king", () => {
         it("correctly displays moves for both kings in boardConfig0", () => {
-            const resultBlackkingGenMoves = chessify0._generateMovesFor({
+            const resultBlackkingGenMoves = chessify0._generatePseduoLegalMovesFor({
                 row: 2,
                 column: 0,
             }) as Array<IGeneratedMoves>;
@@ -236,7 +236,7 @@ describe("ChessLogic class", () => {
                 ].sort(customSortFn)
             );
 
-            const resultWhiteKingGenMoves = chessify0._generateMovesFor({
+            const resultWhiteKingGenMoves = chessify0._generatePseduoLegalMovesFor({
                 row: 6,
                 column: 7,
             }) as Array<IGeneratedMoves>;
@@ -253,7 +253,7 @@ describe("ChessLogic class", () => {
             );
         });
         it("correctly displays moves for both kings in boardConfigPassantable", () => {
-            const resultBlackKingGenMoves = chessifyPassant._generateMovesFor({
+            const resultBlackKingGenMoves = chessifyPassant._generatePseduoLegalMovesFor({
                 row: 0,
                 column: 1,
             }) as Array<IGeneratedMoves>;
@@ -266,7 +266,7 @@ describe("ChessLogic class", () => {
                 ].sort(customSortFn)
             );
 
-            const resultWhiteKingGenMoves = chessifyPassant._generateMovesFor({
+            const resultWhiteKingGenMoves = chessifyPassant._generatePseduoLegalMovesFor({
                 row: 6,
                 column: 1,
             }) as Array<IGeneratedMoves>;
@@ -286,7 +286,7 @@ describe("ChessLogic class", () => {
         });
 
         it ("correctly displays queen moves", () => {
-            let resultGenMoves : IGeneratedMoves[] = chessifyQueen._generateMovesFor({row: 1, column: 0})
+            let resultGenMoves : IGeneratedMoves[] = chessifyQueen._generatePseduoLegalMovesFor({row: 1, column: 0})
             const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 0, column: 0},
@@ -303,7 +303,7 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays queen moves", () => {
-            let resultGenMoves = chessifyQueen._generateMovesFor({row: 1, column: 0})
+            let resultGenMoves = chessifyQueen._generatePseduoLegalMovesFor({row: 1, column: 0})
             const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 0, column: 0},
@@ -320,7 +320,7 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays rook moves", () => {
-            let resultGenMoves = chessifyRook._generateMovesFor({row: 4, column: 3})
+            let resultGenMoves = chessifyRook._generatePseduoLegalMovesFor({row: 4, column: 3})
             const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 0, column: 3},
@@ -341,7 +341,7 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays bishop moves", () => {
-            let resultGenMoves = chessifyC._generateMovesFor({row: 5, column: 0})
+            let resultGenMoves = chessifyC._generatePseduoLegalMovesFor({row: 5, column: 0})
             const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 6, column: 1},
@@ -354,7 +354,7 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly displays knight moves", () => {
-            let resultGenMoves = chessifyKnight._generateMovesFor({row: 4, column: 3})
+            let resultGenMoves = chessifyKnight._generatePseduoLegalMovesFor({row: 4, column: 3})
             const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row:3, column: 1},
@@ -370,7 +370,7 @@ describe("ChessLogic class", () => {
         })
 
         it ("correctly knook moves", () => {
-            let resultGenMoves = chessifyKnook._generateMovesFor({row: 4, column: 3})
+            let resultGenMoves = chessifyKnook._generatePseduoLegalMovesFor({row: 4, column: 3})
             const result = getCoordsOnly(resultGenMoves).sort(customSortFn)
             expect(result).toEqual([
                 {row: 4, column: 0},
@@ -415,14 +415,14 @@ describe("ChessLogic class, specific for king", () => {
     const chessifyKing = new ChessLogic(boardConfigKing)
 
     it("correctly gives legal moves of whiteKing in boardConfigKing", () => {
-        const whiteKingResult = chessifyKing._generateMovesFor(chessifyKing.whiteKingPosition).sort(customSortFnWithActions)
+        const whiteKingResult = chessifyKing._generatePseduoLegalMovesFor(chessifyKing.whiteKingPosition).sort(customSortFnWithActions)
         expect(whiteKingResult).toEqual([
             {coord: {row: 4, column: 3}},
             {coord: {row: 3, column: 5}},
             {coord: {row: 2, column: 4}}
         ].sort(customSortFnWithActions))
 
-        const blackKingResult = chessifyKing._generateMovesFor(chessifyKing.blackKingPosition).sort(customSortFnWithActions)
+        const blackKingResult = chessifyKing._generatePseduoLegalMovesFor(chessifyKing.blackKingPosition).sort(customSortFnWithActions)
         expect(blackKingResult).toEqual([
             {coord: {row:6, column: 5}},
             {coord: {row:7, column: 7}},

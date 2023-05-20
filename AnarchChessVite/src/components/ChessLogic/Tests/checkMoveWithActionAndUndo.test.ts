@@ -149,14 +149,14 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
     it ("does two steps of en-passant perfectly", () => {
         let pieceToPlay = {row: 1, column: 5}
-        let moveList = chessifyPassant_withoutHardcoding._generateMovesFor(pieceToPlay)
+        let moveList = chessifyPassant_withoutHardcoding._generatePseduoLegalMovesFor(pieceToPlay)
         const twoStepMove = moveList.filter((val) =>  val.coord.column === 5 && val.coord.row === 3).pop() as IGeneratedMoves
         chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay,twoStepMove)
 
         expect(chessifyPassant_withoutHardcoding.currentBoard[1]).toEqual( [null, null, null, null, null, null, null, null])
 
         pieceToPlay = {row: 3, column: 4}
-        moveList = chessifyPassant_withoutHardcoding._generateMovesFor(pieceToPlay)
+        moveList = chessifyPassant_withoutHardcoding._generatePseduoLegalMovesFor(pieceToPlay)
         let nextMove = moveList.filter((val) => val.coord.column === 5 && val.coord.row === 2).pop() as IGeneratedMoves
         chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay, nextMove)
 
