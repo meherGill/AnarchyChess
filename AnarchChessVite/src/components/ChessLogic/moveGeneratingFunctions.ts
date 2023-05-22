@@ -1,5 +1,5 @@
 import { IChessPiece, IGeneratedMoves, IMoveHistory, ISquareCoordinate, IilVaticanoReturnType } from "@shared/types";
-import { checkIfCoordInBound, checkIfSquareIsEmpty, getChessPieceNameFor, returnColorOfPiece, returnOpponentColor, _getPieceOnCoord, returnTypeAndColorOfPiece } from "./ChessLogic";
+import { checkIfCoordInBound, checkIfSquareIsEmpty, getChessPieceNameFor, returnColorOfPiece, returnOpponentColor, _getPieceOnCoord } from "./ChessLogic";
 import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enums";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
 
@@ -95,18 +95,17 @@ export const pawnLikeMoves = ({ coord, currentBoard, lastBlackMovePlayedArr, las
         opponentPieceColor = returnOpponentColor(piece)
         //populate newCoordDiagLeft and newCoordDiagRight
         if (typeOfPiece === PlayerColor.black) {
-            newCoordDiagLeft.row = newCoordDiagLeft.row + 1;
-            newCoordDiagLeft.column = newCoordDiagLeft.column - 1;
-            newCoordDiagRight.row = newCoordDiagLeft.column =
-                newCoordDiagLeft.row + 1;
-            newCoordDiagRight.column = newCoordDiagRight.column + 1;
+            newCoordDiagLeft.row = coord.row + 1;
+            newCoordDiagLeft.column = coord.column - 1;
+            newCoordDiagRight.row = coord.row + 1;
+            newCoordDiagRight.column = coord.column + 1;
            
 
         } else if (typeOfPiece === PlayerColor.white) {
-            newCoordDiagLeft.row = newCoordDiagLeft.row - 1;
-            newCoordDiagLeft.column = newCoordDiagLeft.column - 1;
-            newCoordDiagRight.row = newCoordDiagRight.row - 1;
-            newCoordDiagRight.column = newCoordDiagRight.column + 1;
+            newCoordDiagLeft.row = coord.row - 1;
+            newCoordDiagLeft.column = coord.column - 1;
+            newCoordDiagRight.row = coord.row - 1;
+            newCoordDiagRight.column = coord.column + 1;
         
 
         } else {

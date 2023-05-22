@@ -58,6 +58,17 @@ describe("correctly detects if king is in check", () => {
         [null, null, null,null , null, null, null, null],
     ]
 
+    let boardConfigKnook2 = [
+        [ChessPiecesName.blackKing, null, null, null, null, null, null, ChessPiecesName.whiteQueen],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null,null, null, null, null,null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteKnook],
+        [null, null, null,null , null, null, null,  ChessPiecesName.whiteKing],
+    ]
+
     let boardConfigPawn1 = [
         [ChessPiecesName.blackKing, null, null, null, null, null, null, null],
         [null, ChessPiecesName.whitePawn, null, null, null, null, null, null],
@@ -98,6 +109,7 @@ describe("correctly detects if king is in check", () => {
     const chessifyKingCheckBishop = new ChessLogic(boardConfigBishop)
 
     const chessifyKingCheckKnook = new ChessLogic(boardConfigKnook)
+    const chessifyKingCheckKnook2 = new ChessLogic(boardConfigKnook2)
 
     const chessifyKingCheckPawn1 = new ChessLogic(boardConfigPawn1)
     const chessifyKingCheckPawn2 = new ChessLogic(boardConfigPawn2)
@@ -139,10 +151,16 @@ describe("correctly detects if king is in check", () => {
     })
 
     it ("correctly detecs if king is in check from a knook", () => {
-        const result = chessifyKingCheckKnook._isKingInCheck(PlayerColor.white)
+        let result = chessifyKingCheckKnook._isKingInCheck(PlayerColor.white)
         expect(result).toEqual({
             inCheck: true,
             threatAt: {row: 4, column: 3}
+        })
+
+        result = chessifyKingCheckKnook2._isKingInCheck(PlayerColor.white)
+        expect(result).toEqual({
+            inCheck: false,
+            threatAt: null
         })
     })
 

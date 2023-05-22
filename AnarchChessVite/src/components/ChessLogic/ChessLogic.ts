@@ -2,7 +2,7 @@ import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enu
 import { IChessPiece, IGeneratedMoves, IMove, IMoveHistory, IMoveType, ISquareCoordinate } from "@shared/types";
 import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves, returnCastlingCoord } from "./moveGeneratingFunctions";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
-import { makeDeepCopyOfPiece, areCoordsEqual } from "@shared/utilityFunctions";
+import { makeDeepCopyOfPiece, areCoordsEqual, CoordMapper } from "@shared/utility";
 
 export const getChessPieceNameFor = (chessPieceType: TypeOfChessPiece, color: PlayerColor) : ChessPiecesName => {
     return `${color}_${chessPieceType}` as ChessPiecesName
@@ -53,7 +53,7 @@ export const _setPieceOnCoord = (coord: ISquareCoordinate, pieceToSet: IChessPie
 };
 
 export const returnTypeOfPiece = (piece: ChessPiecesName) : TypeOfChessPiece=> {
-    return piece.substring(5, piece.length).toUpperCase() as TypeOfChessPiece;
+    return piece.substring(6, piece.length).toUpperCase() as TypeOfChessPiece;
 };
 class ChessLogic {
     // new features to add
@@ -64,7 +64,7 @@ class ChessLogic {
     // king cant move to c2 (done)
 
     //ToDo:
-    // checkmate
+    // checkmate  (done?)
     // pawn promotion
     currentBoard: Array<Array<IChessPiece | null>>;
     turnToPlay: PlayerColor = PlayerColor.white; //default player to play
@@ -94,7 +94,7 @@ class ChessLogic {
     currentCoordsOnBoardForCurrentPlayersColor: Array<ISquareCoordinate> = []
     uniquePiecesPresentOnBoardForOppositePlayer: Set<TypeOfChessPiece> = new Set()
     //pre-generated moves
-    memoizedLegalMovesMap: Map<ISquareCoordinate, Array<IGeneratedMoves>> = new Map()
+    memoizedLegalMovesMap: CoordMapper<ISquareCoordinate, Array<IGeneratedMoves>> = new CoordMapper()
 
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
         this.currentBoard = [];
@@ -132,7 +132,7 @@ class ChessLogic {
             }
         }
 
-        this.updateAllCoordsOfPieceOnBoardForColor(this.turnToPlay)
+        this.postMoveComputation()
     }
 
     switchTurns = () => {
@@ -532,9 +532,11 @@ class ChessLogic {
                 const piece = this.currentBoard[row][column]
                 if (piece){
                     const colorOfPiece = returnColorOfPiece(piece.name)
-                    if (colorOfPiece !== playerColor){
-                        const coord = {row: row, column: column}
+                    const coord = {row: row, column: column}
+                    if (colorOfPiece === playerColor){
                         updateArr.push(coord)
+                    }
+                    else{
                         newSetOfUnqiuePiecesPresentOnBoardForPlayer.add(returnTypeOfPiece(_getPieceOnCoord(coord, this.currentBoard)!.name))
                     }
                 }
@@ -543,11 +545,11 @@ class ChessLogic {
      return [updateArr, newSetOfUnqiuePiecesPresentOnBoardForPlayer]
     }
 
-    _generatePseudoLegalMovesForAllPiecesFor = (playerColor: PlayerColor) : Map<ISquareCoordinate, Array<IGeneratedMoves>>  => {
+    _generatePseudoLegalMovesForAllPiecesFor = (playerColor: PlayerColor) : CoordMapper<ISquareCoordinate, Array<IGeneratedMoves>>  => {
         let [allCoordsOnBoardForPlayerColor, allUniquePiecesOnBoardForOppositePlayer] 
             =  this.updateAllCoordsOfPieceOnBoardForColor(playerColor)
         this.uniquePiecesPresentOnBoardForOppositePlayer = allUniquePiecesOnBoardForOppositePlayer
-        const moveArr: Map<ISquareCoordinate, Array<IGeneratedMoves>> = new Map()
+        const moveArr: CoordMapper<ISquareCoordinate, Array<IGeneratedMoves>> = new CoordMapper()
         for (const coord of allCoordsOnBoardForPlayerColor){
             const result = this._generatePseduoLegalMovesFor(coord)
             moveArr.set(coord, result)
@@ -569,18 +571,17 @@ class ChessLogic {
         
         //check if every other move will result in check
         let atleastOneMoveIsSafe = false
-        const  allLegalMovesMap = new Map()
+        const  allLegalMovesMap = new CoordMapper()
         for (const [coordFrom, generatedMovesArr ]  of allPseudoLegalMovesMap.entries()){
             let legalMovesForThisCoord : IGeneratedMoves[] = []
             for (const [index, move] of generatedMovesArr.entries()){
                 this.moveWithAction(coordFrom, {coord: move.coord, action: move.action})
-                if (this._isKingInCheck(this.turnToPlay, this.uniquePiecesPresentOnBoardForOppositePlayer).inCheck){
-                    this._undoLastMove()
-                }
-                else{
+                //only if move is king is not in check on that move, add it to legal moves
+                if (!(this._isKingInCheck(this.turnToPlay, this.uniquePiecesPresentOnBoardForOppositePlayer).inCheck)){
                     legalMovesForThisCoord.push(move)
                     atleastOneMoveIsSafe = true
                 }
+                this._undoLastMove()
             }
 
             allLegalMovesMap.set(coordFrom, legalMovesForThisCoord)
