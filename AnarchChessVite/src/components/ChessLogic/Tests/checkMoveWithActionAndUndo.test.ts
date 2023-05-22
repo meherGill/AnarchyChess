@@ -149,6 +149,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
     it ("does two steps of en-passant perfectly", () => {
         let pieceToPlay = {row: 1, column: 5}
+        chessifyPassant_withoutHardcoding.turnToPlay = PlayerColor.black
         let moveList = chessifyPassant_withoutHardcoding._generatePseduoLegalMovesFor(pieceToPlay)
         const twoStepMove = moveList.filter((val) =>  val.coord.column === 5 && val.coord.row === 3).pop() as IGeneratedMoves
         chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay,twoStepMove)
@@ -162,22 +163,4 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
         expect(chessifyPassant_withoutHardcoding.currentBoard[2]).toEqual([{name : ChessPiecesName.blackKing, lastPosition: null}, null, null, null, null, {name : ChessPiecesName.whitePawn, lastPosition: pieceToPlay}, null, null],)
     })
-})
-
-describe('it returns false when there are no valid moves to be made', () => {
-    const boardConfigPassant_withoutHardcoding = [
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null,  ChessPiecesName.blackPawn, null, null],
-        [ChessPiecesName.blackKing, null, null, null, null, null, null, null],
-        [null, null, null, null, ChessPiecesName.whitePawn,null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, ChessPiecesName.whiteKing],
-        [null, null, null, null, null, null, null, null],
-    ]
-    const chessify = new ChessLogic(boardConfigPassant_withoutHardcoding)
-    chessify.turnToPlay = PlayerColor.black
-    chessify.moveWithAction({row: 1, column: 5}, {coord: {row: 3, column: 5}})
-    const result = chessify.moveWithAction({row: 3, column: 4}, {coord: {row: 2, column: 4}})
-    expect(result).toEqual(false)
 })

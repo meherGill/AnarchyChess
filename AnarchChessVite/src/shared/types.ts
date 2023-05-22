@@ -11,7 +11,7 @@ export interface IChessPiece {
 
 export interface IGeneratedMoves {
     coord: ISquareCoordinate
-    action?: MoveAction
+    action?: MoveAction | null | undefined
 }
 export interface IilVaticanoReturnType {
     ilVaticanoPossible: boolean,

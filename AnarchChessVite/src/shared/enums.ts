@@ -13,7 +13,10 @@ export enum ForcedMoveType {
     check = "CHECK"
 }
 
-
+/* IMPORTANT::::
+IF ANY NEW PIECES ARE ADDED HERE THEN donr forget to update
+checkForCheck.ts aswell.
+*/
 export enum TypeOfChessPiece{
    Pawn = `PAWN`,
    Knight = `KNIGHT`,
@@ -21,8 +24,9 @@ export enum TypeOfChessPiece{
    Queen = `QUEEN`,
    Knook = `KNOOK`,
    Bishop = `BISHOP`,
-   Rook = `ROOK`
+   Rook = `ROOK`,
 }
+
 
 export enum ChessPiecesName {
     blackPawn = `BLACK_PAWN`,
