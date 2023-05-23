@@ -3,6 +3,7 @@ import { IChessPiece, IGeneratedMoves, IMove, IMoveHistory, IMoveType, ISquareCo
 import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves, returnCastlingCoord } from "./moveGeneratingFunctions";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
 import { makeDeepCopyOfPiece, areCoordsEqual, CoordMapper } from "@shared/utility";
+import _ from "lodash"
 
 export const getChessPieceNameFor = (chessPieceType: TypeOfChessPiece, color: PlayerColor) : ChessPiecesName => {
     return `${color}_${chessPieceType}` as ChessPiecesName
@@ -89,11 +90,13 @@ class ChessLogic {
     //varaible to see if king is in check
     isKingInCheck: boolean = false
 
-    
+
     currentCoordsOnBoardForCurrentPlayersColor: Array<ISquareCoordinate> = []
     uniquePiecesPresentOnBoardForOppositePlayer: Set<TypeOfChessPiece> = new Set()
     //pre-generated moves
     memoizedLegalMovesMap: CoordMapper<ISquareCoordinate, Array<IGeneratedMoves>> = new CoordMapper()
+
+    mate: any = false //TODO: change  later
 
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
         this.currentBoard = [];
@@ -135,11 +138,11 @@ class ChessLogic {
     }
 
     checkmateHandler = () => {
-        console.log("checkmate")
+        this.mate = true
     }
 
     stalemateHandler = () => {
-        console.log("stalemate")
+        
     }
     switchTurns = () => {
         if (this.turnToPlay === PlayerColor.white) 
@@ -730,6 +733,7 @@ class ChessLogic {
         }
         this.switchTurns()
         this.postMoveComputation()
+        return true
     }
 } 
 

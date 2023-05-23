@@ -304,3 +304,18 @@ describe("it correctly calls checkmate and stalemate", () => {
     })
 
 }) 
+
+describe ("test if postMoveComputation is correctly called during the initial constructor call" , () => {
+    const smotheredMateChecker = [
+        [ChessPiecesName.whiteKing, ChessPiecesName.whiteRook, null, null, null, null, null,null],
+        [ChessPiecesName.whiteQueen, ChessPiecesName.whitePawn,  ChessPiecesName.blackKnight, null, null, null, null, ChessPiecesName.blackQueen],
+        [null, null, null, null, null, null, null, null],
+        [null,null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.blackKing]
+    ]
+    const chessifySmotheredMate = new ChessLogic(smotheredMateChecker)
+    expect(chessifySmotheredMate.mate).toEqual(true)
+})  

@@ -49,5 +49,7 @@ export enum MoveAction{
     enPassant = `EN_PASSANT`,
     horizontalCastling = `HORIZONTAL_CASTLING`,
     ilVaticano = `IL_VATICANO`,
-    knightBoost = `KNIGHT_BOOST`
+    knightBoost = `KNIGHT_BOOST`,
+    verticalCastling = `VERTICAL_CASTLING`,
+    pawnPromotion = `PAWN_PROMOTION`,
 }
