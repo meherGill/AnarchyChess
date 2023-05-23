@@ -1,8 +1,8 @@
-import { describe, it, expect} from "vitest";
+import { describe, it, expect, vi} from "vitest";
 import ChessLogic from "../ChessLogic";
 import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enums";
 import { customSortFn, customSortFnWithActions } from "@helperFunctionsForTest";
-import { CoordMapper } from "../../../shared/utility";
+import { CoordMapper } from "@shared/utility";
 
 
 describe("test post processing function" , () => {
@@ -39,8 +39,7 @@ describe("test post processing function" , () => {
         [ChessPiecesName.whiteBishop, null, null, null, null, null, null, ChessPiecesName.whiteKing]
     ]
 
-    // const boardConfigPassant 
-    const boardConfigPassant = [
+    const boardConfigVaticano = [
         [ChessPiecesName.blackKing, null, null, null, null, null, null,null],
         [null, null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null, null],
@@ -51,10 +50,22 @@ describe("test post processing function" , () => {
         [null, null, null, ChessPiecesName.whiteKing, null, null, null, null]
     ]
 
+    const boardConfigForcedMovePassant = [
+        [ChessPiecesName.blackKing, null, null, null, null, null, ChessPiecesName.blackQueen, ChessPiecesName.blackQueen],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [ChessPiecesName.blackPawn, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, ChessPiecesName.whitePawn, null, null, null, null, ChessPiecesName.whitePawn, ChessPiecesName.whitePawn],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteKing]
+    ]
+
     const chessifyA = new ChessLogic(boardConfigA)
     const chessifyB = new ChessLogic(boardConfigB)
     const chessifyC = new ChessLogic(boardConfigC)
-    const chessifyPassant = new ChessLogic(boardConfigPassant)
+    const chessifyVaticano = new ChessLogic(boardConfigVaticano)
+    const chessifyForcedPassant = new ChessLogic(boardConfigForcedMovePassant)
 
     it ("correctly returns all coords on board for a player and the set of unoque pieces for the opposite player", () => {
         chessifyA.turnToPlay = PlayerColor.white
@@ -158,7 +169,7 @@ describe("test post processing function" , () => {
         }
 
         expectedLegalMoves = new CoordMapper()
-        allLegalMoves = chessifyPassant.memoizedLegalMovesMap
+        allLegalMoves = chessifyVaticano.memoizedLegalMovesMap
 
         //setting legal king moves
         expectedLegalMoves.set({row: 7, column: 3}, [
@@ -180,6 +191,55 @@ describe("test post processing function" , () => {
             expect(recievedValue).toEqual(value)
         }
 
-        
+        expectedLegalMoves = new CoordMapper()
+        chessifyForcedPassant.moveWithAction({row: 6, column: 1}, {coord: {row: 4, column: 1}})
+        chessifyForcedPassant.turnToPlay = PlayerColor.black
+        chessifyForcedPassant.postMoveComputation()
+        console.log("ok", chessifyForcedPassant.memoizedLegalMovesMap)
     })
 })
+
+describe("it correctly calls checkmate and stalemate", () => {
+    const boardConfigVanillaMateInOne = [
+        [ChessPiecesName.blackKing, null, null, null, null, null, null,null],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteQueen],
+        [ChessPiecesName.whiteKing, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null]
+    ]
+
+    const boardConfigMateDueToForcedEnPassant = [
+        [null, null, null, ChessPiecesName.blackKing, null, null, null,null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, ChessPiecesName.blackPawn, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, ChessPiecesName.whitePawn, null, null, null],
+        [null, null, null, ChessPiecesName.whiteRook, null, null, null, ChessPiecesName.whiteKing]
+    ]
+    const chessifyVanillaMateInOne = new ChessLogic(boardConfigVanillaMateInOne)
+    const chessifyMateDueToPassant = new ChessLogic(boardConfigMateDueToForcedEnPassant)
+
+    it ("correctly calls checkmate in mate in 1 position", () => {
+        let spy = vi.spyOn(chessifyVanillaMateInOne, 'checkmateHandler')
+        expect(spy).toHaveBeenCalledTimes(0)
+        chessifyVanillaMateInOne.moveWithAction({row:1, column: 7}, {coord: {row: 1, column: 1}})
+        chessifyVanillaMateInOne.turnToPlay = PlayerColor.black
+        chessifyVanillaMateInOne.postMoveComputation()
+        expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it ("correctly calls mate due to forced passant" , () => {
+        let spy = vi.spyOn(chessifyMateDueToPassant, 'checkmateHandler')
+        expect(spy).toHaveBeenCalledTimes(0)
+        chessifyMateDueToPassant.moveWithAction({row:6, column: 4}, {coord: {row: 4, column: 4}, action: MoveAction.enPassant})
+        chessifyMateDueToPassant.turnToPlay = PlayerColor.black
+        chessifyMateDueToPassant.postMoveComputation()
+        expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+}) 

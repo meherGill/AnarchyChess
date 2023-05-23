@@ -51,7 +51,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
     const chessifySimpleCase = new ChessLogic(boardConfigSimpleCase)
     const chessify_HCastling_KnightBoost_IlVaticano = new ChessLogic(boardConfigWith_HCastling_KnightBoost_IlVaticano)
     const chessifyPassant_twoStepsHardCoded = new ChessLogic(boardConfigPassant_twoStepsHardCoded)
-    chessifyPassant_twoStepsHardCoded.lastBlackMovePlayedArr = [{
+    chessifyPassant_twoStepsHardCoded.lastMovePlayedArr = [{
         piece: ChessPiecesName.blackPawn,
         from: {row: 1, column: 5},
         to: {row: 3, column: 5}

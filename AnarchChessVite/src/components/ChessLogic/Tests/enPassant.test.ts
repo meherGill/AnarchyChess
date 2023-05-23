@@ -27,11 +27,11 @@ describe("it correctly does an en passant check" , () => {
 
     const chessifyDoublePassant = new ChessLogic(boardConfigDoublePassant)
     chessifyDoublePassant.turnToPlay = PlayerColor.white
-    chessifyDoublePassant.lastBlackMovePlayedArr = [{piece: ChessPiecesName.blackPawn, from: {row: 1, column: 1}, to: {row: 3, column: 1}}]
+    chessifyDoublePassant.lastMovePlayedArr = [{piece: ChessPiecesName.blackPawn, from: {row: 1, column: 1}, to: {row: 3, column: 1}}]
 
     const chessifySinglePassant = new ChessLogic(boardConfigSinglePassant)
     chessifySinglePassant.turnToPlay = PlayerColor.black
-    chessifySinglePassant.lastWhiteMovePlayedArr = [{piece: ChessPiecesName.whitePawn, from: {row: 6, column: 0}, to: {row: 4, column: 0}}]
+    chessifySinglePassant.lastMovePlayedArr = [{piece: ChessPiecesName.whitePawn, from: {row: 6, column: 0}, to: {row: 4, column: 0}}]
     
     it("correctly checks for double enpassant" , () => {
         const result = chessifyDoublePassant._isEnPassantPresentForPlayerAndWhere(chessifyDoublePassant.turnToPlay)

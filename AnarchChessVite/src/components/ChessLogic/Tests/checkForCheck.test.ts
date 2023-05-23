@@ -115,7 +115,6 @@ describe("correctly detects if king is in check", () => {
     const chessifyKingCheckPawn2 = new ChessLogic(boardConfigPawn2)
 
     const chessifyKingCheckKing  = new ChessLogic(boardConfigKing)
-
     it ("correctly detects if king is in check from a queen" , () => {
        const result1 = chessifyKingCheckQueen1._isKingInCheck(PlayerColor.white)
        expect(result1).toEqual({

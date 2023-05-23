@@ -39,7 +39,7 @@ export const checkIfValidCoordAndCaptureForPieceColor = (playerColor: PlayerColo
     return {isValid: false, capture: false}
 }
 
-export const pawnLikeMoves = ({ coord, currentBoard, lastBlackMovePlayedArr, lastWhiteMovePlayedArr }: { coord: ISquareCoordinate; currentBoard: Array<Array<IChessPiece | null>>; lastBlackMovePlayedArr: Array<IMoveHistory>; lastWhiteMovePlayedArr: Array<IMoveHistory>; }) : Array<IGeneratedMoves> => {
+export const pawnLikeMoves = ({ coord, currentBoard, lastMovePlayedArr }: { coord: ISquareCoordinate; currentBoard: Array<Array<IChessPiece | null>>; lastMovePlayedArr: Array<IMoveHistory>}) : Array<IGeneratedMoves> => {
     const piece = _getPieceOnCoord(coord, currentBoard)?.name
     let opponentPieceColor : PlayerColor; 
     let playerColor: PlayerColor;
@@ -147,27 +147,25 @@ export const pawnLikeMoves = ({ coord, currentBoard, lastBlackMovePlayedArr, las
             }
         }
         if (enPassantableCheck1) {
-            const lastWhiteMovePlayed =
-                lastWhiteMovePlayedArr?.at(-1);
-            const lastBlackMovePlayed =
-                lastBlackMovePlayedArr?.at(-1);
+
+            const lastMovePlayed = lastMovePlayedArr?.at(-1)
             if (opponentPieceColor === PlayerColor.black) {
                 if (
-                    lastBlackMovePlayed?.from.row === 1 &&
-                    lastBlackMovePlayed?.to.row === 3 &&
-                    lastBlackMovePlayed.piece ===
+                    lastMovePlayed?.from.row === 1 &&
+                    lastMovePlayed?.to.row === 3 &&
+                    lastMovePlayed.piece ===
                         ChessPiecesName.blackPawn
                 ) {
                     if (
                         Math.abs(
                             coord.column -
-                                lastBlackMovePlayed.to.column
+                                lastMovePlayed.to.column
                         ) === 1
                     ) {
                         returnCoordinatesArray = [{
                             coord: {
-                                row: lastBlackMovePlayed.to.row - 1,
-                                column: lastBlackMovePlayed.to
+                                row: lastMovePlayed.to.row - 1,
+                                column: lastMovePlayed.to
                                     .column,
                             },
                             action: MoveAction.enPassant
@@ -177,21 +175,21 @@ export const pawnLikeMoves = ({ coord, currentBoard, lastBlackMovePlayedArr, las
                 }
             } else if (opponentPieceColor === PlayerColor.white) {
                 if (
-                    lastWhiteMovePlayed?.from.row === 6 &&
-                    lastWhiteMovePlayed?.to.row === 4 &&
-                    lastWhiteMovePlayed.piece ===
+                    lastMovePlayed?.from.row === 6 &&
+                    lastMovePlayed?.to.row === 4 &&
+                    lastMovePlayed.piece ===
                         ChessPiecesName.whitePawn
                 ) {
                     if (
                         Math.abs(
                             coord.column -
-                                lastWhiteMovePlayed.to.column
+                                lastMovePlayed.to.column
                         ) === 1
                     ) {
                         returnCoordinatesArray = [{
                             coord:{
-                                row: lastWhiteMovePlayed.to.row + 1,
-                                column: lastWhiteMovePlayed.to
+                                row: lastMovePlayed.to.row + 1,
+                                column: lastMovePlayed.to
                                     .column,
                             },
                             action: MoveAction.enPassant

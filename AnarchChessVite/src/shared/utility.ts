@@ -33,9 +33,13 @@ class CoordMapper<K,V> extends Map {
         return super.set(stringifiedKey,v)
     }
 
-    get = (k: ISquareCoordinate) => {
+    get = (k: ISquareCoordinate) : IGeneratedMoves[] => {
         const stringifiedKey = JSON.stringify(k)
         return super.get(stringifiedKey)
+    }
+
+    has = (k: ISquareCoordinate) => {
+        return super.has(JSON.stringify(k))
     }
 
     * keys() : any { //find a better way, returning any because thats the only way to fix the linting error
@@ -46,10 +50,12 @@ class CoordMapper<K,V> extends Map {
     }
 
     * entries(): any {
-    const parentEntriesIterator = super.entries();
-    for (const [key, value] of parentEntriesIterator){
-         yield [JSON.parse(key), value]
+        const parentEntriesIterator = super.entries();
+        for (const [key, value] of parentEntriesIterator){
+            yield [JSON.parse(key), value]
+        }
     }
-  }
+
+ 
 }
 export {CoordMapper}

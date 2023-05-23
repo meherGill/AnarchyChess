@@ -73,8 +73,7 @@ class ChessLogic {
     blackKingPosition: ISquareCoordinate = {row: 0, column: 4}; //the default position of black king on starting board
     whiteKingPosition:ISquareCoordinate= {row: 7, column: 4}; //the default position of white king on starting board
     
-    lastWhiteMovePlayedArr: Array<IMoveHistory> = [];
-    lastBlackMovePlayedArr: Array<IMoveHistory> = [];
+    lastMovePlayedArr : Array<IMoveHistory> = [];
 
     whiteHasCastled: boolean = false
     blackHasCastled: boolean = false
@@ -135,11 +134,30 @@ class ChessLogic {
         this.postMoveComputation()
     }
 
+    checkmateHandler = () => {
+        console.log("checkmate")
+    }
+
+    stalemateHandler = () => {
+        console.log("stalemate")
+    }
     switchTurns = () => {
         if (this.turnToPlay === PlayerColor.white) 
             this.turnToPlay = PlayerColor.black
         else
             this.turnToPlay = PlayerColor.white
+    }
+
+    _checkIfMoveLegal = (move: IMoveType) : boolean => {
+        const val = this.moveWithAction(move.from, {coord: move.to, action: move.action})
+        if (val){
+            if (!(this._isKingInCheck(this.turnToPlay, this.uniquePiecesPresentOnBoardForOppositePlayer).inCheck)){
+                this._undoLastMove()
+                return true
+            }
+        }
+        this._undoLastMove()
+        return false
     }
 
     _isKingInCheck = (playerColor: PlayerColor, uniquePiecesOnBoardForPlayer?: Set<TypeOfChessPiece>) => {
@@ -165,19 +183,20 @@ class ChessLogic {
 
         let pawnsThatCanEnPassantArr : Array<ISquareCoordinate> = []
         if (playerColor === PlayerColor.white){
-            lastPlayCoordToCheckFor = this.lastBlackMovePlayedArr.at(-1)
+           
             coloredPawn = ChessPiecesName.blackPawn
             expectedRowFrom = 1
             expectedRowTo = 3
             potentialEnPassantableCoordinate_row = 2
         }
         else{
-            lastPlayCoordToCheckFor = this.lastWhiteMovePlayedArr.at(-1)
+
             coloredPawn = ChessPiecesName.whitePawn
             expectedRowFrom = 6
             expectedRowTo = 4
             potentialEnPassantableCoordinate_row = 5
         }
+        lastPlayCoordToCheckFor = this.lastMovePlayedArr.at(-1)
 
         if (!lastPlayCoordToCheckFor){
             return false
@@ -241,7 +260,7 @@ class ChessLogic {
                         if en-passant available, en passant forced (done)
                         pawn promotion: get knight boost if promoted to knight
                     */
-                    returnCoordinatesArray = pawnLikeMoves({ coord, currentBoard: this.currentBoard, lastBlackMovePlayedArr: this.lastBlackMovePlayedArr, lastWhiteMovePlayedArr: this.lastWhiteMovePlayedArr })
+                    returnCoordinatesArray = pawnLikeMoves({ coord, currentBoard: this.currentBoard, lastMovePlayedArr: this.lastMovePlayedArr })
                     break;
 
                 case ChessPiecesName.blackKing:
@@ -357,17 +376,43 @@ class ChessLogic {
         let enPassantMoves = this._isEnPassantPresentForPlayerAndWhere(playerColor)
         if (enPassantMoves){
             enPassantMoves = enPassantMoves as IMove[]
-            const moveActions : IMoveType[] = enPassantMoves.map(enPassantMove => {
+            const moves : IMoveType[] = enPassantMoves.map(enPassantMove => {
                 return {...enPassantMove, action: MoveAction.enPassant}
             })
-            this.forcedMoves = [...this.forcedMoves, ...moveActions]
+            this.forcedMoves = [...this.forcedMoves, ... moves]
         }
         
-        //check if any of the forced moves is in the legal moves generated otherwise
-        return false
+
+        if (this.forcedMoves.length === 0){
+            return true
+        }
+        //check if all forced moves result in a checkmate
+        let isCheckmate = true
+        for (let move of this.forcedMoves){
+            if (this._checkIfMoveLegal(move)){
+                isCheckmate = false
+                break
+            }
+        }
+        
+        if (isCheckmate){
+            this.checkmateHandler()
+            return false
+        }
+        else{
+            return true
+        }
     }   
 
     _moveCoordOnly = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate) => {
+
+        if (_getPieceOnCoord(coordFrom, this.currentBoard)?.name === ChessPiecesName.blackKing){
+            this.blackKingPosition = {...coordTo}
+        }
+        else if (_getPieceOnCoord(coordFrom, this.currentBoard)?.name === ChessPiecesName.whiteKing){
+            this.whiteKingPosition = {...coordTo}
+        }
+
         this.currentBoard[coordTo.row][coordTo.column] = this.currentBoard[coordFrom.row][coordFrom.column]
         this.currentBoard[coordFrom.row][coordFrom.column] = null
         this.currentBoard[coordTo.row][coordTo.column]!.lastPosition = {row: coordFrom.row, column: coordFrom.column}
@@ -376,6 +421,12 @@ class ChessLogic {
     _undoLastMove = () => {
         for (let {coord, value} of this.coordsAffectedWithPrevValue){
             this.currentBoard[coord.row][coord.column] = value
+            if (value?.name === ChessPiecesName.blackKing){
+                this.blackKingPosition = {...coord}
+            }
+            else if(value?.name === ChessPiecesName.whiteKing){
+                this.whiteKingPosition = {...coord}
+            }
         }
     }
     
@@ -384,23 +435,6 @@ class ChessLogic {
         let rightCoord: ISquareCoordinate
         this.coordsAffectedWithPrevValue = []
         
-        let exitEarly = false
-
-        if (this.forcedMoves.length > 0){
-            exitEarly = true
-            for (let forcedMove of this.forcedMoves){
-                if (
-                    areCoordsEqual(coordFrom, forcedMove.from)
-                    &&
-                    areCoordsEqual(coordTo, forcedMove.to)
-                ){
-                    exitEarly = false
-                }
-            }
-        }
-        if (exitEarly){
-            return false
-        }
 
         switch(action){
             case MoveAction.ilVaticano:
@@ -513,14 +547,8 @@ class ChessLogic {
                 from: coordFrom,
                 to: coordTo
             }
-            if (this.turnToPlay === PlayerColor.white){
-                this.lastWhiteMovePlayedArr.push(moveHistoryElement)
-            }
-            else{
-                this.lastBlackMovePlayedArr.push(moveHistoryElement)
-            }
+            this.lastMovePlayedArr.push(moveHistoryElement)
             return true
-
         }
     }
 
@@ -559,6 +587,7 @@ class ChessLogic {
 
     postMoveComputation = () => {
         /*
+        - update Forced Move array first
         - First generate all pseudlo legal moves for all pieces for one player and the types of pieces on board for the opposite player
         - Then while you iterate through pseudo legal moves, then you use types of piece of opposite player on current board to efficiently check if king is in check
         - you filter out all the moves where the king is not in check and you get a list of all legal moves
@@ -566,22 +595,37 @@ class ChessLogic {
         */
     
         // very heavy function
+        const  allLegalMovesMap = new CoordMapper()
+        if (!this._updateForcedMovesAsideFromCheckFor(this.turnToPlay)){
+            return
+        }
+        if (this.forcedMoves.length > 0){
+            for (let move of this.forcedMoves){
+                if (allLegalMovesMap.has(move.from)){
+                    let currMoves = allLegalMovesMap.get(move.from)
+                    currMoves.push({coord: move.to, action: move.action})
+                }
+                else{
+                    allLegalMovesMap.set(move.from, [{coord: move.to, action: move.action}])
+                }
+            }
+            return
+        }
         let allPseudoLegalMovesMap = this._generatePseudoLegalMovesForAllPiecesFor(this.turnToPlay)
         const inCheck = this._isKingInCheck(this.turnToPlay).inCheck
         
         //check if every other move will result in check
         let atleastOneMoveIsSafe = false
-        const  allLegalMovesMap = new CoordMapper()
+        
         for (const [coordFrom, generatedMovesArr ]  of allPseudoLegalMovesMap.entries()){
             let legalMovesForThisCoord : IGeneratedMoves[] = []
             for (const [index, move] of generatedMovesArr.entries()){
-                this.moveWithAction(coordFrom, {coord: move.coord, action: move.action})
-                //only if move is king is not in check on that move, add it to legal moves
-                if (!(this._isKingInCheck(this.turnToPlay, this.uniquePiecesPresentOnBoardForOppositePlayer).inCheck)){
+
+                if (this._checkIfMoveLegal({from: coordFrom, to: move.coord, action: move.action})){
                     legalMovesForThisCoord.push(move)
                     atleastOneMoveIsSafe = true
                 }
-                this._undoLastMove()
+
             }
 
             allLegalMovesMap.set(coordFrom, legalMovesForThisCoord)
@@ -590,10 +634,10 @@ class ChessLogic {
         this.memoizedLegalMovesMap = allLegalMovesMap
 
         if (!atleastOneMoveIsSafe && inCheck){
-            console.log("Checkmate")
+            this.checkmateHandler()
         }
         else if (!atleastOneMoveIsSafe && !inCheck){
-            console.log("Stalemate")
+            this.stalemateHandler()
         }
     }
 
@@ -631,20 +675,24 @@ class ChessLogic {
             - if every move in forcedMove object results in check for player2, then its a checkmate againh
         */
 
-        let validMoveForcedMoves = true
+        let validForcedMove = false
         if (this.forcedMoves.length > 0){
             // in forced moves
-
-            validMoveForcedMoves = false
-            for (let move of this.forcedMoves){
-                if ((move.from === coordFrom) && (move.to === coordTo)){
-                    this.moveWithAction(coordFrom, {coord: coordTo, action: move.action})
-                    validMoveForcedMoves = true
-                    break
+            
+            validForcedMove = false
+            const generatedMoves = this.memoizedLegalMovesMap.get(coordFrom)
+            if (generatedMoves){
+                for (let move of generatedMoves){
+                    if ((move.coord.row === coordTo.row) && (move.coord.column === coordTo.column)){
+                        validForcedMove = true
+                        this.moveWithAction(coordFrom, {coord: coordTo, action: move.action})
+                        break
+                    }
                 }
+                return validForcedMove 
             }
-            if (!validMoveForcedMoves){
-                return false
+            else{
+                false
             }
         }
         else {

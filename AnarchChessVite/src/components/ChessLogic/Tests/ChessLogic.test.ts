@@ -160,7 +160,7 @@ describe("ChessLogic class", () => {
     let chessifyKnight = new ChessLogic(boardConfigKnight)
     let chessifyRook = new ChessLogic(boardConfigRook)
 
-    chessifyPassant.lastBlackMovePlayedArr = [
+    chessifyPassant.lastMovePlayedArr = [
         {
             piece: ChessPiecesName.blackPawn,
             from: { row: 1, column: 1 },
