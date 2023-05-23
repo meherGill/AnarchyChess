@@ -168,6 +168,10 @@ describe("test post processing function" , () => {
             expect(recievedValue).toEqual(value)
         }
 
+        // ####
+        // ### now checking for vaticano ##
+        // ####
+        
         expectedLegalMoves = new CoordMapper()
         allLegalMoves = chessifyVaticano.memoizedLegalMovesMap
 
@@ -186,16 +190,29 @@ describe("test post processing function" , () => {
             {coord: {row: 6, column: 2}, action: MoveAction.ilVaticano},
         ])
 
+        expect(expectedLegalMoves.size).toEqual(allLegalMoves.size)
         for (let [key, value] of expectedLegalMoves.entries()){
             const recievedValue = allLegalMoves.get(key).sort(customSortFnWithActions)
             expect(recievedValue).toEqual(value)
         }
 
+        // ####
+        // ### now checking for forced passant ##
+        // ####
+
         expectedLegalMoves = new CoordMapper()
+
         chessifyForcedPassant.moveWithAction({row: 6, column: 1}, {coord: {row: 4, column: 1}})
         chessifyForcedPassant.turnToPlay = PlayerColor.black
         chessifyForcedPassant.postMoveComputation()
-        console.log("ok", chessifyForcedPassant.memoizedLegalMovesMap)
+
+        expectedLegalMoves.set({row:4, column: 0}, [{coord: {row: 5, column: 1}, action: MoveAction.enPassant}])
+        allLegalMoves = chessifyForcedPassant.memoizedLegalMovesMap
+
+        expect(expectedLegalMoves.size).toEqual(allLegalMoves.size)
+        for (let [key, value] of expectedLegalMoves.entries()){
+            expect(allLegalMoves.get(key).sort(customSortFnWithActions)).toEqual(value.sort(customSortFnWithActions))
+        }
     })
 })
 
@@ -221,8 +238,34 @@ describe("it correctly calls checkmate and stalemate", () => {
         [null, null, null, null, ChessPiecesName.whitePawn, null, null, null],
         [null, null, null, ChessPiecesName.whiteRook, null, null, null, ChessPiecesName.whiteKing]
     ]
+
+    const boardConfigStalemateChecker = [
+        [ChessPiecesName.blackKing, null, null, null, null, null, null,null],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteQueen],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteKing]
+    ]
+    
+    const smotheredMateInOneChecker = [
+        [ChessPiecesName.blackKing, ChessPiecesName.blackRook, null, null, null, null, null,null],
+        [ChessPiecesName.blackQueen, ChessPiecesName.blackPawn, null, null, null, null, null, ChessPiecesName.whiteQueen],
+        [null, null, null, null, null, null, null, null],
+        [null, ChessPiecesName.whiteKnight, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, ChessPiecesName.whiteKing]
+    ]
+
     const chessifyVanillaMateInOne = new ChessLogic(boardConfigVanillaMateInOne)
     const chessifyMateDueToPassant = new ChessLogic(boardConfigMateDueToForcedEnPassant)
+
+    const chessifyStalemateInOne = new ChessLogic(boardConfigStalemateChecker)
+    const chessifySmotheredMate = new ChessLogic(smotheredMateInOneChecker)
 
     it ("correctly calls checkmate in mate in 1 position", () => {
         let spy = vi.spyOn(chessifyVanillaMateInOne, 'checkmateHandler')
@@ -239,6 +282,24 @@ describe("it correctly calls checkmate and stalemate", () => {
         chessifyMateDueToPassant.moveWithAction({row:6, column: 4}, {coord: {row: 4, column: 4}, action: MoveAction.enPassant})
         chessifyMateDueToPassant.turnToPlay = PlayerColor.black
         chessifyMateDueToPassant.postMoveComputation()
+        expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it ("correctly calls checkmate handler for smothered mate", () => {
+        let spy = vi.spyOn(chessifySmotheredMate, 'checkmateHandler')
+        expect(spy).toHaveBeenCalledTimes(0)
+        chessifySmotheredMate.moveWithAction({row: 3, column: 1}, {coord: {row: 1, column: 2}})
+        chessifySmotheredMate.turnToPlay = PlayerColor.black
+        chessifySmotheredMate.postMoveComputation()
+        expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it ("correctly calls stalemate handler", () => {
+        let spy = vi.spyOn(chessifyStalemateInOne, 'stalemateHandler')
+        expect(spy).toHaveBeenCalledTimes(0)
+        chessifyStalemateInOne.moveWithAction({row: 1, column: 7}, {coord: {row: 1, column: 2}})
+        chessifyStalemateInOne.turnToPlay = PlayerColor.black
+        chessifyStalemateInOne.postMoveComputation()
         expect(spy).toHaveBeenCalledTimes(1)
     })
 

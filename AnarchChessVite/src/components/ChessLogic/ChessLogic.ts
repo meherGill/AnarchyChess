@@ -428,6 +428,7 @@ class ChessLogic {
                 this.whiteKingPosition = {...coord}
             }
         }
+        this.lastMovePlayedArr.pop()
     }
     
     moveWithAction = (coordFrom: ISquareCoordinate, {coord: coordTo, action} : IGeneratedMoves) : boolean => {
@@ -586,6 +587,8 @@ class ChessLogic {
     }
 
     postMoveComputation = () => {
+        // very heavy function
+        
         /*
         - update Forced Move array first
         - First generate all pseudlo legal moves for all pieces for one player and the types of pieces on board for the opposite player
@@ -594,9 +597,9 @@ class ChessLogic {
         - using those legal moves you can check if the king is in checkmate, stalemate or neither
         */
     
-        // very heavy function
         const  allLegalMovesMap = new CoordMapper()
         if (!this._updateForcedMovesAsideFromCheckFor(this.turnToPlay)){
+            // this means checkmate
             return
         }
         if (this.forcedMoves.length > 0){
@@ -609,6 +612,7 @@ class ChessLogic {
                     allLegalMovesMap.set(move.from, [{coord: move.to, action: move.action}])
                 }
             }
+            this.memoizedLegalMovesMap = allLegalMovesMap
             return
         }
         let allPseudoLegalMovesMap = this._generatePseudoLegalMovesForAllPiecesFor(this.turnToPlay)
