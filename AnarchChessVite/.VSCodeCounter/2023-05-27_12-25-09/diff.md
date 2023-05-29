@@ -1,0 +1,29 @@
+# Diff Summary
+
+Date : 2023-05-27 12:25:09
+
+Directory /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src
+
+Total : 6 files,  83 codes, -4 comments, 11 blanks, all 90 lines
+
+[Summary](results.md) / [Details](details.md) / Diff Summary / [Diff Details](diff-details.md)
+
+## Languages
+| language | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| TypeScript | 4 | 85 | 0 | 9 | 94 |
+| TypeScript JSX | 2 | -2 | -4 | 2 | -4 |
+
+## Directories
+| path | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| . | 6 | 83 | -4 | 11 | 90 |
+| . (Files) | 1 | 0 | -5 | 1 | -4 |
+| components | 5 | 83 | 1 | 10 | 94 |
+| components/ChessLogic | 4 | 85 | 0 | 9 | 94 |
+| components/ChessLogic (Files) | 2 | 40 | 0 | 2 | 42 |
+| components/ChessLogic/Tests | 2 | 45 | 0 | 7 | 52 |
+| components/ChessLogic/Tests/FullFunctionalityTest | 1 | -1 | 0 | 1 | 0 |
+| components/Chessboard | 1 | -2 | 1 | 1 | 0 |
+
+[Summary](results.md) / [Details](details.md) / Diff Summary / [Diff Details](diff-details.md)

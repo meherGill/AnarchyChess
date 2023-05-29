@@ -1,0 +1,33 @@
+Date : 2023-05-26 19:33:57
+Directory : /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src
+Total : 4 files,  54 codes, 0 comments, 7 blanks, all 61 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| TypeScript |          4 |         54 |          0 |          7 |         61 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                 | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                    |          4 |         54 |          0 |          7 |         61 |
+| components                                                                                                                           |          3 |         51 |          0 |          6 |         57 |
+| components/ChessLogic                                                                                                                |          3 |         51 |          0 |          6 |         57 |
+| components/ChessLogic (Files)                                                                                                        |          2 |         36 |          0 |          5 |         41 |
+| components/ChessLogic/Tests                                                                                                          |          1 |         15 |          0 |          1 |         16 |
+| shared                                                                                                                               |          1 |          3 |          0 |          1 |          4 |
++--------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                             | language   | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/ChessLogic.ts                   | TypeScript |         31 |          0 |          4 |         35 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/pawnPromotionTest.test.ts | TypeScript |         15 |          0 |          1 |         16 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/moveGeneratingFunctions.ts      | TypeScript |          5 |          0 |          1 |          6 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/enums.ts                                       | TypeScript |          3 |          0 |          1 |          4 |
+| Total                                                                                                                                |            |         54 |          0 |          7 |         61 |
++--------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

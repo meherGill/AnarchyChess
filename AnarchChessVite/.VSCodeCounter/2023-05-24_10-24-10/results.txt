@@ -1,0 +1,60 @@
+Date : 2023-05-24 10:24:10
+Directory : /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src
+Total : 23 files,  2682 codes, 184 comments, 409 blanks, all 3275 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| TypeScript     |         16 |      2,588 |        179 |        393 |      3,160 |
+| TypeScript JSX |          3 |         53 |          5 |          9 |         67 |
+| CSS            |          3 |         40 |          0 |          7 |         47 |
+| XML            |          1 |          1 |          0 |          0 |          1 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                               | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                                  |         23 |      2,682 |        184 |        409 |      3,275 |
+| . (Files)                                                                                                                                          |          5 |         61 |          6 |         12 |         79 |
+| assets                                                                                                                                             |          1 |          1 |          0 |          0 |          1 |
+| components                                                                                                                                         |         13 |      2,478 |        174 |        372 |      3,024 |
+| components/ChessLogic                                                                                                                              |         11 |      2,446 |        174 |        367 |      2,987 |
+| components/ChessLogic (Files)                                                                                                                      |          3 |      1,089 |        156 |        192 |      1,437 |
+| components/ChessLogic/Tests                                                                                                                        |          8 |      1,357 |         18 |        175 |      1,550 |
+| components/ChessLogic/Tests (Files)                                                                                                                |          7 |      1,304 |         18 |        163 |      1,485 |
+| components/ChessLogic/Tests/FullFunctionalityTest                                                                                                  |          1 |         53 |          0 |         12 |         65 |
+| components/Chessboard                                                                                                                              |          2 |         32 |          0 |          5 |         37 |
+| shared                                                                                                                                             |          4 |        142 |          4 |         25 |        171 |
++----------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                                                           | language       | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/App.css                                                             | CSS            |         37 |          0 |          6 |         43 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/App.tsx                                                             | TypeScript JSX |         12 |          5 |          3 |         20 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/react.svg                                                    | XML            |          1 |          0 |          0 |          1 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/ChessLogic.ts                                 | TypeScript     |        520 |        118 |        102 |        740 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/ChessLogic.test.ts                      | TypeScript     |        405 |          0 |         27 |        432 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/FullFunctionalityTest/FoolsMate.test.ts | TypeScript     |         53 |          0 |         12 |         65 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/checkForCastling.test.ts                | TypeScript     |         68 |          0 |         11 |         79 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/checkForCheck.test.ts                   | TypeScript     |        169 |          0 |         27 |        196 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/checkMoveWithActionAndUndo.test.ts      | TypeScript     |        143 |          0 |         23 |        166 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/enPassant.test.ts                       | TypeScript     |         63 |          3 |         11 |         77 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/moveGeneratingFunctions.test.ts         | TypeScript     |        195 |          0 |         19 |        214 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/postMoveComputation.test.ts             | TypeScript     |        261 |         15 |         45 |        321 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/checkForCheck.ts                              | TypeScript     |        159 |         12 |         31 |        202 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/moveGeneratingFunctions.ts                    | TypeScript     |        410 |         26 |         59 |        495 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/Chessboard.css                                | CSS            |          0 |          0 |          1 |          1 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/Chessboard.tsx                                | TypeScript JSX |         32 |          0 |          4 |         36 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/index.css                                                           | CSS            |          3 |          0 |          0 |          3 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/main.tsx                                                            | TypeScript JSX |          9 |          0 |          2 |         11 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/enums.ts                                                     | TypeScript     |         45 |          4 |          6 |         55 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/helperFunctionsForTest.ts                                    | TypeScript     |         16 |          0 |          3 |         19 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/types.ts                                                     | TypeScript     |         31 |          0 |          5 |         36 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/utility.ts                                                   | TypeScript     |         50 |          0 |         11 |         61 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/vite-env.d.ts                                                       | TypeScript     |          0 |          1 |          1 |          2 |
+| Total                                                                                                                                              |                |      2,682 |        184 |        409 |      3,275 |
++----------------------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

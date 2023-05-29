@@ -199,6 +199,22 @@ export const pawnLikeMoves = ({ coord, currentBoard, lastMovePlayedArr }: { coor
                 }
             }
         }
+        let rowToCheckFor : number;
+        if (playerColor === PlayerColor.white){
+            rowToCheckFor = 0
+        }
+        else{
+            rowToCheckFor = 7
+        }
+
+        returnCoordinatesArray = returnCoordinatesArray.flatMap((generatedMove) => {
+            if (generatedMove.coord.row === rowToCheckFor){
+                return [{...generatedMove, action: MoveAction.pawnPromotionBishop} , {...generatedMove, action: MoveAction.pawnPromotionKnook}, {...generatedMove, action: MoveAction.pawnPromotionQueen}, {...generatedMove, action: MoveAction.pawnPromotionRook}]
+            }
+            else{
+                return generatedMove
+            }
+        })
     }
     return returnCoordinatesArray    
 }

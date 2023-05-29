@@ -51,5 +51,8 @@ export enum MoveAction{
     ilVaticano = `IL_VATICANO`,
     knightBoost = `KNIGHT_BOOST`,
     verticalCastling = `VERTICAL_CASTLING`,
-    pawnPromotion = `PAWN_PROMOTION`,
+    pawnPromotionKnook = `PAWN_PROMOTION_KNOOK`,
+    pawnPromotionBishop = `PAWN_PROMOTION_BISHOP`,
+    pawnPromotionQueen = `PAWN_PROMOTION_QUEEN`,
+    pawnPromotionRook = `PAWN_PROMOTION_ROOK`,
 }

@@ -438,7 +438,18 @@ class ChessLogic {
         let leftCoord: ISquareCoordinate
         let rightCoord: ISquareCoordinate
         this.coordsAffectedWithPrevValue = []
-        
+        let typePromotedTo: TypeOfChessPiece
+        let playerColor = returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name)
+
+        const handlePromotionAction = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate, typePromotedTo: TypeOfChessPiece) => {
+            const piecePromotedTo = getChessPieceNameFor(typePromotedTo, playerColor)
+            this.coordsAffectedWithPrevValue = [
+                {coord: coordFrom , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard))},
+                {coord: coordTo , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordTo, this.currentBoard))}
+            ]
+            this._moveCoordOnly(coordFrom, coordTo)
+            _setPieceOnCoord(coordTo, {name: piecePromotedTo, lastPosition: null}, this.currentBoard)
+        }
 
         switch(action){
             case MoveAction.ilVaticano:
@@ -529,7 +540,26 @@ class ChessLogic {
                 this._moveCoordOnly(coordFrom, coordTo)
                 this.currentBoard[coordTo.row][coordTo.column] = {name: getChessPieceNameFor(TypeOfChessPiece.Knight, pieceColor), lastPosition: null}
                 break;
+            case MoveAction.pawnPromotionBishop:
+                typePromotedTo = TypeOfChessPiece.Bishop
+                handlePromotionAction(coordFrom, coordTo, typePromotedTo)
+                break;
 
+            case MoveAction.pawnPromotionKnook:
+                typePromotedTo = TypeOfChessPiece.Knook
+                handlePromotionAction(coordFrom, coordTo, typePromotedTo)
+                break;
+
+            case MoveAction.pawnPromotionQueen:
+                typePromotedTo = TypeOfChessPiece.Queen
+                handlePromotionAction(coordFrom, coordTo, typePromotedTo)
+                break;
+            
+            case MoveAction.pawnPromotionRook:
+                typePromotedTo = TypeOfChessPiece.Rook
+                handlePromotionAction(coordFrom, coordTo, typePromotedTo)
+                break;
+        
             default:
                 this.coordsAffectedWithPrevValue = [
                     {coord: coordFrom , value: makeDeepCopyOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard))},
@@ -648,7 +678,7 @@ class ChessLogic {
         }
     }
 
-    playerMadeMove = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate) => {
+    playerMadeMove = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate, pawnPromotionAction?: MoveAction) => {
 
         /*
         Assumption: 
@@ -690,7 +720,8 @@ class ChessLogic {
             const generatedMoves = this.memoizedLegalMovesMap.get(coordFrom)
             if (generatedMoves){
                 for (let move of generatedMoves){
-                    if ((move.coord.row === coordTo.row) && (move.coord.column === coordTo.column)){
+                    if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
+                    && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
                         validForcedMove = true
                         this.moveWithAction(coordFrom, {coord: coordTo, action: move.action})
                         break
@@ -713,7 +744,9 @@ class ChessLogic {
             let action = null
             if (moves){
                 for (let move of moves){
-                    if ((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row)){
+                    if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
+                            && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
+                        
                         validMoveOfCoord = true
                         action = move.action
                     }
