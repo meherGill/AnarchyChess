@@ -28,17 +28,17 @@ class CoordMapper<K,V> extends Map {
     constructor(){
         super()
     }
-    set = (k: ISquareCoordinate, v: Array<IGeneratedMoves>) => {
+    set(k: ISquareCoordinate, v: Array<IGeneratedMoves>){
         const stringifiedKey = JSON.stringify(k)
         return super.set(stringifiedKey,v)
     }
 
-    get = (k: ISquareCoordinate) : IGeneratedMoves[] => {
+    get(k: ISquareCoordinate) : IGeneratedMoves[]{
         const stringifiedKey = JSON.stringify(k)
         return super.get(stringifiedKey)
     }
 
-    has = (k: ISquareCoordinate) => {
+    has(k: ISquareCoordinate) {
         return super.has(JSON.stringify(k))
     }
 

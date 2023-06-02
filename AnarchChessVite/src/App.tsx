@@ -1,18 +1,17 @@
-import { useState } from "react";
-import "./App.css";
+import { useState, createContext, useRef } from "react";
 import Chessboard from "./components/Chessboard/Chessboard";
+import ChessLogic from "./components/ChessLogic/ChessLogic";
+import normalChessBoard from "@shared/chessboardConfigs";
+
+export const ChessLogicContext = createContext<ChessLogic | null>(null);
 
 function App() {
-    const [textVal, setTextVal] = useState("");
-    // return (
-    //     <div className="App">
-    //         <Chessboard />
-    //     </div>
-    // );
     return (
-        <div className="App">
-            <input></input>
-        </div>
+        <ChessLogicContext.Provider value={new ChessLogic(normalChessBoard)}>
+            <div className="h-screen w-screen">
+                <Chessboard />
+            </div>
+        </ChessLogicContext.Provider>
     );
 }
 

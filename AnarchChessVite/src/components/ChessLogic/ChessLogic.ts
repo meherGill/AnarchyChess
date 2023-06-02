@@ -678,6 +678,26 @@ class ChessLogic {
         }
     }
 
+    checkIfNeedToProvidePawnPromotionOption = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate) : boolean => {
+        const pieceAtCoordFrom = _getPieceOnCoord(coordFrom, this.currentBoard)
+        if (pieceAtCoordFrom){
+            if ((returnTypeOfPiece(pieceAtCoordFrom.name) === TypeOfChessPiece.Pawn) 
+                && (returnColorOfPiece(pieceAtCoordFrom.name) === this.turnToPlay)){
+                    let lastRowForPiece: number
+                    if (this.turnToPlay === PlayerColor.white){
+                        lastRowForPiece = 0
+                    }
+                    else{
+                        lastRowForPiece = 7
+                    }
+                    if (coordTo.row === lastRowForPiece){
+                        
+                    }
+                }
+        }
+        return false
+    }
+
     playerMadeMove = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate, pawnPromotionAction?: MoveAction) => {
 
         /*
@@ -711,7 +731,7 @@ class ChessLogic {
             - update forced moves object for player2
             - if every move in forcedMove object results in check for player2, then its a checkmate againh
         */
-
+       
         let validForcedMove = false
         if (this.forcedMoves.length > 0){
             // in forced moves

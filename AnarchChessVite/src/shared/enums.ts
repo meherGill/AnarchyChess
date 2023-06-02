@@ -1,6 +1,6 @@
 export enum ChessSquareColor {
-    dark = "DARK",
-    light = "LIGHT",
+    dark = "1",
+    light = "-1",
 }
 
 export enum PlayerColor {
