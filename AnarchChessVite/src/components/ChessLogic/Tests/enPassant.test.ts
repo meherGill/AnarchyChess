@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import ChessLogic, { _setPieceOnCoord } from "../ChessLogic";
 import { ChessPiecesName, PlayerColor } from "@enums";
+import exp from "constants";
 
 describe("it correctly does an en passant check" , () => {
     let boardConfigDoublePassant = [
@@ -74,4 +75,60 @@ describe("it correctly does an en passant check" , () => {
 
     })
 
+    it ("correctly does en-passant when an incorrect turn is played first", () => {
+        let newBoard = [
+            [ChessPiecesName.blackKing, null, null, null, null, null, null, null],
+            [null, ChessPiecesName.blackPawn, ChessPiecesName.blackPawn, ChessPiecesName.blackPawn,null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null,ChessPiecesName.whitePawn, null, null, null, null, null],
+            [ChessPiecesName.whitePawn, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, ChessPiecesName.whiteKing],
+            [null, null, null, null, null, null, null, null],
+        ];
+
+        const chessifyNewBoard = new ChessLogic(newBoard)
+        let res = chessifyNewBoard.playerMadeMove({row: 4, column: 0}, {row: 3, column: 0})
+        expect(res).toEqual(true)
+        expect(chessifyNewBoard.currentBoard[3]).toEqual([
+            { name: ChessPiecesName.whitePawn, lastPosition: { row: 4, column: 0 } },
+            null,
+            { name: ChessPiecesName.whitePawn, lastPosition: null },
+            null,
+            null,
+            null,
+            null,
+            null
+        ])
+        expect(chessifyNewBoard.currentBoard[4]).toEqual([
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ])
+
+        res = chessifyNewBoard.playerMadeMove({row: 1, column: 1},{row: 3, column: 1})
+        expect(res).toEqual(true)
+        expect(chessifyNewBoard.currentBoard[3]).toEqual([
+            { name: ChessPiecesName.whitePawn, lastPosition: { row: 4, column: 0 } },
+            { name: ChessPiecesName.blackPawn, lastPosition: {row: 1, column: 1} },
+            { name: ChessPiecesName.whitePawn, lastPosition: null },
+            null,
+            null,
+            null,
+            null,
+            null
+        ])
+
+        let badMove = chessifyNewBoard.playerMadeMove({row: 6, column:7} , {row: 0, column: 0})
+        expect(badMove).toEqual(false)
+        res = chessifyNewBoard.playerMadeMove({row: 3, column:0} , {row: 2, column: 1})
+        expect(res).toEqual(true)
+        res = chessifyNewBoard.playerMadeMove({row: 1, column: 2}, {row: 2, column: 1})
+        expect(res).toEqual(true)
+    })
 })

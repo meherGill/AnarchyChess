@@ -55,7 +55,10 @@ const Chessboard = () => {
         const coordTo = e.over?.data.current?.squareCoord;
         if (coordFrom && coordTo) {
             const res = chessLogicValue?.playerMadeMove(coordFrom, coordTo);
-            if (res) setMoveDone(moveDone * -1);
+            if (res) {
+                console.log(chessLogicValue!.currentBoard);
+                setMoveDone(moveDone * -1);
+            }
         }
     };
     return (

@@ -11,4 +11,15 @@ const normalChessBoard: Array<Array<ChessPiecesName | null>> = [
     [ChessPiecesName.whiteRook, ChessPiecesName.whiteKnight, ChessPiecesName.whiteBishop, ChessPiecesName.whiteQueen, ChessPiecesName.whiteKing, ChessPiecesName.whiteBishop, ChessPiecesName.whiteKnight, ChessPiecesName.whiteRook]
 ]
 
+export const configTest =  [
+    [ChessPiecesName.blackKing, null, null, null, null, null, null, null],
+    [null, ChessPiecesName.blackPawn, ChessPiecesName.blackPawn, ChessPiecesName.blackPawn,null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null,ChessPiecesName.whitePawn, null, null, null, null, null],
+    [ChessPiecesName.whitePawn, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, ChessPiecesName.whiteKing],
+    [null, null, null, null, null, null, null, null],
+]
+
 export default normalChessBoard

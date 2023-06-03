@@ -732,61 +732,71 @@ class ChessLogic {
             - if every move in forcedMove object results in check for player2, then its a checkmate againh
         */
        
-        let validForcedMove = false
-        if (this.forcedMoves.length > 0){
-            // in forced moves
-            
-            validForcedMove = false
-            const generatedMoves = this.memoizedLegalMovesMap.get(coordFrom)
-            if (generatedMoves){
-                for (let move of generatedMoves){
-                    if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
-                    && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
-                        validForcedMove = true
-                        this.moveWithAction(coordFrom, {coord: coordTo, action: move.action})
-                        break
+
+        const preMoveValidation = () : false | [MoveAction | null | undefined] => {
+            if (this.forcedMoves.length > 0){
+                // in forced moves
+
+                const generatedMoves = this.memoizedLegalMovesMap.get(coordFrom)
+                if (generatedMoves){
+                    for (let move of generatedMoves){
+                        if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
+                        && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
+                            return [move.action]
+                        }
                     }
+                    return false 
                 }
-                return validForcedMove 
-            }
-            else{
-                false
-            }
-        }
-        else {
-            // no forced moves
-             //check if coordFrom belongs to wrong turn to play:
-            if (returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name) !== this.turnToPlay){
-                return false
-            }
-            let moves = this.memoizedLegalMovesMap.get(coordFrom)
-            let validMoveOfCoord = false
-            let action = null
-            if (moves){
-                for (let move of moves){
-                    if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
-                            && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
-                        
-                        validMoveOfCoord = true
-                        action = move.action
-                    }
-                }
-                if (!validMoveOfCoord){
-                    // coordFrom is not a valid move in coordTo
+                else{
                     return false
                 }
             }
-            else{
-                // there were no moves generated for that piece
-                return false
+            else {
+                // no forced moves
+                 //check if coordFrom belongs to wrong turn to play:
+                if (returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name) !== this.turnToPlay){
+                    return false
+                }
+                let moves = this.memoizedLegalMovesMap.get(coordFrom)
+                let validMoveOfCoord = false
+                let action = null
+                if (moves){
+                    for (let move of moves){
+                        if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
+                                && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
+                            
+                            validMoveOfCoord = true
+                            action = move.action
+                        }
+                    }
+                    if (!validMoveOfCoord){
+                        // coordFrom is not a valid move in coordTo
+                        return false
+                    }
+                }
+                else{
+                    // there were no moves generated for that piece
+                    return false
+                }
+    
+                // make the move
+                return [action]
+               
             }
-
-            // make the move
-            this.moveWithAction(coordFrom, {coord: coordTo, action: action})
         }
-        this.switchTurns()
-        this.postMoveComputation()
-        return true
+        
+        const valid = preMoveValidation()
+        if (valid){
+            const action = valid[0]
+            this.moveWithAction(coordFrom, {coord: coordTo, action: action})
+            this.switchTurns()
+            this.postMoveComputation()
+            return true
+
+        }
+        else{
+            return false
+        }
     }
 } 
 
