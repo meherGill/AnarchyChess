@@ -12,6 +12,8 @@ import { ReactComponent as BlackPawn } from "@/assets/Pieces/black_pawn.svg";
 import { ReactComponent as WhitePawn } from "@/assets/Pieces/white_pawn.svg";
 import { ReactComponent as BlackRook } from "@/assets/Pieces/black_rook.svg";
 import { ReactComponent as WhiteRook } from "@/assets/Pieces/white_rook.svg";
+import { ReactComponent as BlackKnook } from "@/assets/Pieces/black_knook.svg";
+import { ReactComponent as WhiteKnook } from "@/assets/Pieces/white_knook.svg";
 
 const map = new Map<ChessPiecesName, any>([
     [ChessPiecesName.blackPawn, <BlackPawn />],
@@ -26,6 +28,8 @@ const map = new Map<ChessPiecesName, any>([
     [ChessPiecesName.whiteKnight, <WhiteKnight />],
     [ChessPiecesName.blackRook, <BlackRook />],
     [ChessPiecesName.whiteRook, <WhiteRook />],
+    [ChessPiecesName.blackKnook, <BlackKnook />],
+    [ChessPiecesName.whiteKnook, <WhiteKnook />],
 ]);
 
 export default map;
