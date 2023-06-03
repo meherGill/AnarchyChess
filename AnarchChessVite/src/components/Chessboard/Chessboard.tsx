@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { ChessLogicContext } from "../../App";
 import ChessSquare from "./ChessSquare";
 import { ChessSquareColor } from "@shared/enums";
@@ -55,6 +55,7 @@ const Chessboard = () => {
         const coordTo = e.over?.data.current?.squareCoord;
         if (coordFrom && coordTo) {
             //check if user input required
+            // currently only in the case of pawn promotion
 
             const res = chessLogicValue?.playerMadeMove(coordFrom, coordTo);
             if (res) {

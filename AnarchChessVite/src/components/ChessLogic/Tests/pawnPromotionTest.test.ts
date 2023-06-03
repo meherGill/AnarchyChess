@@ -78,4 +78,34 @@ describe ("correctly handles pawn promotion" ,() => {
             null
           ])
     })
+
+    it ("correctly tells if pawn will promote next move" , () => {
+        let baoardConfigNew = [
+            [null,null,null,null,ChessPiecesName.blackBishop,null,null,null],
+            [null,null,null,ChessPiecesName.whitePawn,null,null,null,null],
+            [ChessPiecesName.whitePawn,null,null,null,null,null,null,null],
+            [null,null,null,null,null,null,null,null],
+            [ChessPiecesName.blackKing,null,null,null,null,null,null,null],
+            [null,null,null,null,null,null,null,null],
+            [null,null,null,null,null,null,ChessPiecesName.blackPawn,null],
+            [null,null,null,null,null,ChessPiecesName.whiteBishop,ChessPiecesName.whiteKing,ChessPiecesName.blackKnight],
+        ]
+        
+        const chessifyNew = new ChessLogic(baoardConfigNew)
+        let res = chessifyNew.checkIfNeedToProvidePawnPromotionOption({row: 1, column: 3}, {row: 0, column: 3})
+        expect(res).toEqual(true)
+        res = chessifyNew.checkIfNeedToProvidePawnPromotionOption({row: 1, column: 3}, {row: 0, column: 4})
+        expect(res).toEqual(true)
+        res = chessifyNew.checkIfNeedToProvidePawnPromotionOption({row: 2, column: 0}, {row: 0, column: 3})
+        expect(res).toEqual(false)
+
+        //supposed to be false since its not blacks turn right now
+        res = chessifyNew.checkIfNeedToProvidePawnPromotionOption({row: 6, column: 6}, {row: 7, column: 5})
+        expect(res).toEqual(false)
+
+        //after making the following move, it will now show promotion for black
+        chessifyNew.playerMadeMove({row: 7, column: 6}, {row:6, column: 7})
+        res = chessifyNew.checkIfNeedToProvidePawnPromotionOption({row: 6, column: 6}, {row: 7, column: 5})
+        expect(res).toEqual(true)
+    })
 })

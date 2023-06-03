@@ -691,10 +691,21 @@ class ChessLogic {
                     else{
                         lastRowForPiece = 7
                     }
-                    if (coordTo.row === lastRowForPiece){
-
+                    // if (coordTo.row === lastRowForPiece){
+                    //     return true
+                    // }
+                    // else{
+                    //     return false
+                    // }
+                    let generatedPawnMoves = this.memoizedLegalMovesMap.get(coordFrom)
+                    for (let move of generatedPawnMoves){
+                        if ((move.coord.row === lastRowForPiece) 
+                            && (move.coord.row === coordTo.row)
+                            && (move.coord.column === coordTo.column)){
+                                return true
+                        }
                     }
-                }
+            }
         }
         return false
     }
