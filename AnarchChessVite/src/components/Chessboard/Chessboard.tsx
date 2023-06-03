@@ -2,9 +2,11 @@ import React, { useCallback, useContext, useRef, useState } from "react";
 import { ChessLogicContext } from "../../App";
 import ChessSquare from "./ChessSquare";
 import { ChessSquareColor } from "@shared/enums";
-import { ISquareCoordinate } from "../../shared/types";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 const Chessboard = () => {
+    const [moveDone, setMoveDone] = useState(-1);
+
     const chessLogicValue = useContext(ChessLogicContext);
 
     const displayChessBoard = () => {
@@ -48,17 +50,27 @@ const Chessboard = () => {
         return arrToReturn;
     };
 
+    const onDragEndHandler = (e: DragEndEvent) => {
+        const coordFrom = e.active.data.current?.squareCoord;
+        const coordTo = e.over?.data.current?.squareCoord;
+        if (coordFrom && coordTo) {
+            const res = chessLogicValue?.playerMadeMove(coordFrom, coordTo);
+            if (res) setMoveDone(moveDone * -1);
+        }
+    };
     return (
-        <div className="w-fit h-fit right-1/2 translate-x-2/4 grid grid-cols-8">
-            {displayChessBoard()}
-            {chessLogicValue!.mate ? (
-                <div className="absolute h-screen w-screen bg-slate-100">
-                    <h1>Checkmate</h1>
-                </div>
-            ) : (
-                ""
-            )}
-        </div>
+        <DndContext onDragEnd={onDragEndHandler}>
+            <div className="w-fit h-fit right-1/2 translate-x-2/4 grid grid-cols-8">
+                {displayChessBoard()}
+                {chessLogicValue!.mate ? (
+                    <div className="absolute h-screen w-screen bg-slate-100">
+                        <h1>Checkmate</h1>
+                    </div>
+                ) : (
+                    ""
+                )}
+            </div>
+        </DndContext>
     );
 };
 

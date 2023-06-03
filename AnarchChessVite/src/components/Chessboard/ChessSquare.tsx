@@ -1,6 +1,7 @@
-import { ChessPiecesName, ChessSquareColor } from "@shared/enums";
 import React from "react";
-import { IChessPiece } from "@shared/types";
+import { useDroppable } from "@dnd-kit/core";
+import { ChessPiecesName, ChessSquareColor } from "@shared/enums";
+import { IChessPiece, ISquareCoordinate } from "@shared/types";
 import ChessPiece from "./ChessPieces/ChessPieces";
 
 interface ChessSquarePropsInterface {
@@ -18,38 +19,65 @@ const ChessSquare = ({
 }: ChessSquarePropsInterface) => {
     // console.count("render");
 
+    const { setNodeRef } = useDroppable({
+        id: `${row}_${column}`,
+        data: {
+            squareCoord: { row: row, column: column } as ISquareCoordinate,
+        },
+    });
+
     const getPieceValueFromIChessPiece = (piece: IChessPiece | null) => {
         if (piece) {
-            switch (piece.name) {
-                case ChessPiecesName.blackBishop:
-                    return <ChessPiece toDisplay={"bB"} />;
-                case ChessPiecesName.blackKing:
-                    return <ChessPiece toDisplay={"bK"} />;
-                case ChessPiecesName.blackKnight:
-                    return <ChessPiece toDisplay={"bN"} />;
-                case ChessPiecesName.blackKnook:
-                    return <ChessPiece toDisplay={"Ko"} />;
-                case ChessPiecesName.blackPawn:
-                    return <ChessPiece toDisplay={"bP"} />;
-                case ChessPiecesName.blackQueen:
-                    return <ChessPiece toDisplay={"bQ"} />;
-                case ChessPiecesName.blackRook:
-                    return <ChessPiece toDisplay={"bR"} />;
-                case ChessPiecesName.whiteBishop:
-                    return <ChessPiece toDisplay={"wB"} />;
-                case ChessPiecesName.whiteKing:
-                    return <ChessPiece toDisplay={"wK"} />;
-                case ChessPiecesName.whiteKnight:
-                    return <ChessPiece toDisplay={"wN"} />;
-                case ChessPiecesName.whiteKnook:
-                    return <ChessPiece toDisplay={"Ko"} />;
-                case ChessPiecesName.whitePawn:
-                    return <ChessPiece toDisplay={"wP"} />;
-                case ChessPiecesName.whiteQueen:
-                    return <ChessPiece toDisplay={"wQ"} />;
-                case ChessPiecesName.whiteRook:
-                    return <ChessPiece toDisplay={"wR"} />;
-            }
+            // switch (piece.name) {
+            //     case ChessPiecesName.blackBishop:
+            //         toDisplay = "bB";
+            //         break;
+            //     case ChessPiecesName.blackKing:
+            //         toDisplay = "bK";
+            //         break;
+            //     case ChessPiecesName.blackKnight:
+            //         toDisplay = "bN";
+            //         break;
+            //     case ChessPiecesName.blackKnook:
+            //         toDisplay = "Ko";
+            //         break;
+            //     case ChessPiecesName.blackPawn:
+            //         toDisplay = "bP";
+            //         break;
+            //     case ChessPiecesName.blackQueen:
+            //         toDisplay = "bQ";
+            //         break;
+            //     case ChessPiecesName.blackRook:
+            //         toDisplay = "bR";
+            //         break;
+            //     case ChessPiecesName.whiteBishop:
+            //         toDisplay = "wB";
+            //         break;
+            //     case ChessPiecesName.whiteKing:
+            //         toDisplay = "wK";
+            //         break;
+            //     case ChessPiecesName.whiteKnight:
+            //         toDisplay = "wN";
+            //         break;
+            //     case ChessPiecesName.whiteKnook:
+            //         toDisplay = "Ko";
+            //         break;
+            //     case ChessPiecesName.whitePawn:
+            //         toDisplay = "wP";
+            //         break;
+            //     case ChessPiecesName.whiteQueen:
+            //         toDisplay = "wQ";
+            //         break;
+            //     case ChessPiecesName.whiteRook:
+            //         toDisplay = "wR";
+            //         break;
+            //     default:
+            //         console.error("this shouldnt happen");
+            //         break;
+            // }
+            return (
+                <ChessPiece toDisplay={piece.name} row={row} column={column} />
+            );
         } else {
             return null;
         }
@@ -63,7 +91,7 @@ const ChessSquare = ({
     }
 
     return (
-        <div className={`${bgToUse} h-20 w-20`}>
+        <div ref={setNodeRef} className={`${bgToUse} h-20 w-20`}>
             <div className="flex justify-center items-center h-full w-full text-black">
                 {getPieceValueFromIChessPiece(piece)}
             </div>
@@ -71,4 +99,4 @@ const ChessSquare = ({
     );
 };
 
-export default React.memo(ChessSquare);
+export default ChessSquare;
