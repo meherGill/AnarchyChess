@@ -691,7 +691,7 @@ class ChessLogic {
                         lastRowForPiece = 7
                     }
                     if (coordTo.row === lastRowForPiece){
-                        
+
                     }
                 }
         }

@@ -6,24 +6,6 @@ import { ISquareCoordinate } from "../../shared/types";
 
 const Chessboard = () => {
     const chessLogicValue = useContext(ChessLogicContext);
-    const squareDropedOnRef = useRef<ISquareCoordinate | null>(null);
-    const squareCoordFromRef = useRef<ISquareCoordinate | null>(null);
-
-    const [toRender, setToRender] = useState(-1);
-
-    const onPieceDragStartParentHandler = (row: number, column: number) => {
-        squareCoordFromRef.current = { row: row, column: column };
-    };
-
-    const onPieceDragStopParentHandler = (row: number, column: number) => {
-        const result = chessLogicValue!.playerMadeMove(
-            squareCoordFromRef.current as ISquareCoordinate,
-            squareDropedOnRef.current as ISquareCoordinate
-        );
-        if (result) {
-            setToRender(toRender * -1);
-        }
-    };
 
     const displayChessBoard = () => {
         let arrToReturn = new Array(
@@ -52,9 +34,6 @@ const Chessboard = () => {
                         column={column}
                         key={`${row}_${column}`}
                         piece={piece}
-                        passedOnDragStart={onPieceDragStartParentHandler}
-                        passedOnDragStop={onPieceDragStopParentHandler}
-                        ref={squareDropedOnRef}
                     />
                 );
                 if (color === ChessSquareColor.dark) {
@@ -70,8 +49,15 @@ const Chessboard = () => {
     };
 
     return (
-        <div className="w-fit h-fit right-1/2 translate-x-2/4 grid grid-cols-8 absolute">
+        <div className="w-fit h-fit right-1/2 translate-x-2/4 grid grid-cols-8">
             {displayChessBoard()}
+            {chessLogicValue!.mate ? (
+                <div className="absolute h-screen w-screen bg-slate-100">
+                    <h1>Checkmate</h1>
+                </div>
+            ) : (
+                ""
+            )}
         </div>
     );
 };
