@@ -199,6 +199,8 @@ export const pawnLikeMoves = ({ coord, currentBoard, lastMovePlayedArr }: { coor
                 }
             }
         }
+
+        //check for promotion
         let rowToCheckFor : number;
         if (playerColor === PlayerColor.white){
             rowToCheckFor = 0
@@ -209,7 +211,13 @@ export const pawnLikeMoves = ({ coord, currentBoard, lastMovePlayedArr }: { coor
 
         returnCoordinatesArray = returnCoordinatesArray.flatMap((generatedMove) => {
             if (generatedMove.coord.row === rowToCheckFor){
-                return [{...generatedMove, action: MoveAction.pawnPromotionBishop} , {...generatedMove, action: MoveAction.pawnPromotionKnook}, {...generatedMove, action: MoveAction.pawnPromotionQueen}, {...generatedMove, action: MoveAction.pawnPromotionRook}]
+                let knightMovesAtThatCoordForKnightBoost = knightLikeMoves(generatedMove.coord,currentBoard,playerColor).map(move => {
+                    return {...move, action: MoveAction.knightBoost}
+                })
+                return [...knightMovesAtThatCoordForKnightBoost, {...generatedMove, action: MoveAction.pawnPromotionBishop}, 
+                    {...generatedMove, action: MoveAction.pawnPromotionKnook}, 
+                    {...generatedMove, action: MoveAction.pawnPromotionQueen}, 
+                    {...generatedMove, action: MoveAction.pawnPromotionRook}]
             }
             else{
                 return generatedMove
@@ -320,9 +328,9 @@ export const rookLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Arr
     return commonFunctionalityForRookAndBishop(coords, currentBoard, straightFunctionArr)
 }
 
-export const knightLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>) : Array<IGeneratedMoves>=> {
+export const knightLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>, playerColor: PlayerColor) : Array<IGeneratedMoves>=> {
     const returnMovesArray : Array<IGeneratedMoves>= []
-    const playerColor = returnColorOfPiece(_getPieceOnCoord(coords, currentBoard)!.name)
+    // const playerColor = returnColorOfPiece(_getPieceOnCoord(coords, currentBoard)!.name)
 
     const twoUpOneRight = {row: coords.row-2, column: coords.column+1}
     const twoUpOneLeft = {row: coords.row-2, column: coords.column-1}

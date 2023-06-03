@@ -251,7 +251,9 @@ class ChessLogic {
     ): Array<IGeneratedMoves>  => {
         if (this.currentBoard[coord.row][coord.column]) {
             let returnCoordinatesArray: Array<IGeneratedMoves> = [];
-            const piece = this.currentBoard[coord.row][coord.column]?.name;
+            const piece = this.currentBoard[coord.row][coord.column]!.name;
+            const colorOfPiece: PlayerColor = returnColorOfPiece(piece)
+            
             switch (piece) {
                 //for pawns
                 case ChessPiecesName.blackPawn:
@@ -276,7 +278,6 @@ class ChessLogic {
                             verticle castling
                             reverse castling //will add this later
                     */
-                    const colorOfPPiece = returnColorOfPiece(piece)
                     const allKingsMoves = kingLikeMoves(coord, this.currentBoard)
 
                     //filters out all squares that are in check
@@ -293,15 +294,15 @@ class ChessLogic {
                     const allLegalKingMoves = allKingsMoves.filter(generatedMove => {
                         const coord = generatedMove.coord
                         
-                        return !checkIfGivenPositionIsInCheck(coord, colorOfPPiece, this.currentBoard).inCheck
+                        return !checkIfGivenPositionIsInCheck(coord, colorOfPiece, this.currentBoard).inCheck
                     })
                     
                     //replacing the empty square used for the previous square back to a king piece
                     _setPieceOnCoord(coord, kingChessPiece, this.currentBoard)
                     returnCoordinatesArray = allLegalKingMoves
                     //if its white king and it hasnt castled or if its black king that hasnt castled, add castling coords
-                    if ((colorOfPPiece === PlayerColor.white && !this.whiteHasCastled) 
-                         || (colorOfPPiece === PlayerColor.black && !this.blackHasCastled)){
+                    if ((colorOfPiece === PlayerColor.white && !this.whiteHasCastled) 
+                         || (colorOfPiece === PlayerColor.black && !this.blackHasCastled)){
                             returnCoordinatesArray = [...returnCoordinatesArray, ...returnCastlingCoord(coord, this.currentBoard)]
                     }
                     break;
@@ -312,7 +313,7 @@ class ChessLogic {
                         moves to add:
                             normal knight moves (done)
                     */
-                    returnCoordinatesArray = [...knightLikeMoves(coord, this.currentBoard)]
+                    returnCoordinatesArray = [...knightLikeMoves(coord, this.currentBoard, colorOfPiece)]
                     
                     break;
 
@@ -358,7 +359,7 @@ class ChessLogic {
                             knook moves: a mixture of knight and rook (done)
                     */
                     returnCoordinatesArray = [...returnCoordinatesArray, ...rookLikeMoves(coord, this.currentBoard)]
-                    returnCoordinatesArray = [...returnCoordinatesArray, ...knightLikeMoves(coord, this.currentBoard)]
+                    returnCoordinatesArray = [...returnCoordinatesArray, ...knightLikeMoves(coord, this.currentBoard, colorOfPiece)]
                     break;
 
                 default:

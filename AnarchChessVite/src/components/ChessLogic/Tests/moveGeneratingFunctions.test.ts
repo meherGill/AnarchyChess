@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { ChessPiecesName, MoveAction } from "@enums";
-import ChessLogic from "../ChessLogic";
+import ChessLogic, { _getPieceOnCoord, returnColorOfPiece } from "../ChessLogic";
 import { vanillaBishopLikeMoves, knightLikeMoves, rookLikeMoves, generateIlVaticano } from "../moveGeneratingFunctions";
-import { customSortFn, getCoordsOnly } from "../../../shared/helperFunctionsForTest";
+import { customSortFn, getCoordsOnly } from "@shared/helperFunctionsForTest";
+import { pawnLikeMoves } from "../moveGeneratingFunctions";
 
 
 describe("ChessLogic class", () => {
@@ -152,7 +153,9 @@ describe("ChessLogic class", () => {
     })
 
     it ("correctly generates knight moves" , () => {
-        const blackKnightGenMoves = knightLikeMoves({row: 4, column: 3}, chessifyKnight.currentBoard)
+        let knightCoord = {row: 4, column: 3}
+        let colorOfPiece = returnColorOfPiece(_getPieceOnCoord(knightCoord, chessifyKnight.currentBoard)!.name)
+        const blackKnightGenMoves = knightLikeMoves(knightCoord, chessifyKnight.currentBoard, colorOfPiece)
         const blackKnight = getCoordsOnly(blackKnightGenMoves).sort(customSortFn)
         expect(blackKnight).toEqual([
             {row:  2, column: 4},
@@ -165,7 +168,9 @@ describe("ChessLogic class", () => {
             {row:  5, column: 5},
         ].sort(customSortFn))
 
-        const whiteKnightGenMoves = knightLikeMoves({row: 7, column: 7}, chessifyKnight.currentBoard)
+        knightCoord = {row: 7, column: 7}
+        colorOfPiece = returnColorOfPiece(_getPieceOnCoord(knightCoord, chessifyKnight.currentBoard)!.name)
+        const whiteKnightGenMoves = knightLikeMoves(knightCoord, chessifyKnight.currentBoard, colorOfPiece)
         const whiteKnight = getCoordsOnly(whiteKnightGenMoves)
         expect(whiteKnight).toEqual([
             {row: 5, column: 6}
@@ -210,5 +215,22 @@ describe("ChessLogic class", () => {
             ilVaticanoPossible: false,
             secondBishopLikeCoords: []
         })
+    })
+
+    it ("correctly generates pawn moves including knight boost", () => {
+        let boardConfigNew = [
+            [null, null, null, null, null, null, ChessPiecesName.blackKing],
+            [null, ChessPiecesName.whitePawn, null, null, null, ChessPiecesName.blackPawn, null, null],
+            [null, null, null, null, null, null, null, null],
+            [ChessPiecesName.whiteBishop, ChessPiecesName.blackPawn, ChessPiecesName.blackPawn, ChessPiecesName.whiteBishop, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [ChessPiecesName.whiteRook, null, null, ChessPiecesName.whiteKing, null, null, null, null],
+        ]
+
+        const chessifyNewBoardConfig = new ChessLogic(boardConfigNew)
+        let res = pawnLikeMoves({coord: {row: 1, column: 1}, currentBoard: chessifyNewBoardConfig.currentBoard, lastMovePlayedArr: chessifyNewBoardConfig.lastMovePlayedArr})
+        console.log(res)
     })
 })

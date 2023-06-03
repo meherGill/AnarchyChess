@@ -54,6 +54,8 @@ const Chessboard = () => {
         const coordFrom = e.active.data.current?.squareCoord;
         const coordTo = e.over?.data.current?.squareCoord;
         if (coordFrom && coordTo) {
+            //check if user input required
+
             const res = chessLogicValue?.playerMadeMove(coordFrom, coordTo);
             if (res) {
                 console.log(chessLogicValue!.currentBoard);
