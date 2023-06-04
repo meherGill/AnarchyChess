@@ -2,7 +2,7 @@ import React from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { ISquareCoordinate } from "@shared/types";
-import PieceToImageMapper from "./ChessPiecesMapped";
+import PieceToImageMapper from "../../../shared/ChessPiecesMapped";
 
 interface ChessPiecePropsInterface {
     toDisplay: any;
@@ -22,7 +22,7 @@ const ChessPiece = ({ toDisplay, row, column }: ChessPiecePropsInterface) => {
         transform: CSS.Translate.toString(transform),
     };
 
-    // console.count("piece-render");
+    // console.count(toDisplay);
     return (
         <div {...attributes} {...listeners} ref={setNodeRef} style={style}>
             {PieceToImageMapper.get(toDisplay)}
