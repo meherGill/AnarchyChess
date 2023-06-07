@@ -28,53 +28,6 @@ const ChessSquare = ({
 
     const getPieceValueFromIChessPiece = (piece: IChessPiece | null) => {
         if (piece) {
-            // switch (piece.name) {
-            //     case ChessPiecesName.blackBishop:
-            //         toDisplay = "bB";
-            //         break;
-            //     case ChessPiecesName.blackKing:
-            //         toDisplay = "bK";
-            //         break;
-            //     case ChessPiecesName.blackKnight:
-            //         toDisplay = "bN";
-            //         break;
-            //     case ChessPiecesName.blackKnook:
-            //         toDisplay = "Ko";
-            //         break;
-            //     case ChessPiecesName.blackPawn:
-            //         toDisplay = "bP";
-            //         break;
-            //     case ChessPiecesName.blackQueen:
-            //         toDisplay = "bQ";
-            //         break;
-            //     case ChessPiecesName.blackRook:
-            //         toDisplay = "bR";
-            //         break;
-            //     case ChessPiecesName.whiteBishop:
-            //         toDisplay = "wB";
-            //         break;
-            //     case ChessPiecesName.whiteKing:
-            //         toDisplay = "wK";
-            //         break;
-            //     case ChessPiecesName.whiteKnight:
-            //         toDisplay = "wN";
-            //         break;
-            //     case ChessPiecesName.whiteKnook:
-            //         toDisplay = "Ko";
-            //         break;
-            //     case ChessPiecesName.whitePawn:
-            //         toDisplay = "wP";
-            //         break;
-            //     case ChessPiecesName.whiteQueen:
-            //         toDisplay = "wQ";
-            //         break;
-            //     case ChessPiecesName.whiteRook:
-            //         toDisplay = "wR";
-            //         break;
-            //     default:
-            //         console.error("this shouldnt happen");
-            //         break;
-            // }
             return (
                 <ChessPiece toDisplay={piece.name} row={row} column={column} />
             );
