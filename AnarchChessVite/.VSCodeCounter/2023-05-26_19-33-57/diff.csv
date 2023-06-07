@@ -1,0 +1,6 @@
+"filename", "language", "TypeScript", "comment", "blank", "total"
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/ChessLogic.ts", "TypeScript", 31, 0, 4, 35
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/pawnPromotionTest.test.ts", "TypeScript", 15, 0, 1, 16
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/moveGeneratingFunctions.ts", "TypeScript", 5, 0, 1, 6
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/enums.ts", "TypeScript", 3, 0, 1, 4
+"Total", "-", 54, 0, 7, 61

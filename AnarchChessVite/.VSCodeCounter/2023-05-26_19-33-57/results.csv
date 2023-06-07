@@ -1,0 +1,26 @@
+"filename", "language", "XML", "TypeScript JSX", "TypeScript", "CSS", "comment", "blank", "total"
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/App.css", "CSS", 0, 0, 0, 37, 0, 6, 43
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/App.tsx", "TypeScript JSX", 0, 12, 0, 0, 5, 3, 20
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/react.svg", "XML", 1, 0, 0, 0, 0, 0, 1
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/ChessLogic.ts", "TypeScript", 0, 0, 551, 0, 118, 106, 775
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/ChessLogic.test.ts", "TypeScript", 0, 0, 405, 0, 0, 27, 432
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/FullFunctionalityTest/FoolsMate.test.ts", "TypeScript", 0, 0, 53, 0, 0, 12, 65
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/checkForCastling.test.ts", "TypeScript", 0, 0, 68, 0, 0, 11, 79
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/checkForCheck.test.ts", "TypeScript", 0, 0, 169, 0, 0, 27, 196
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/checkMoveWithActionAndUndo.test.ts", "TypeScript", 0, 0, 143, 0, 0, 23, 166
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/enPassant.test.ts", "TypeScript", 0, 0, 63, 0, 3, 11, 77
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/moveGeneratingFunctions.test.ts", "TypeScript", 0, 0, 195, 0, 0, 19, 214
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/pawnPromotionTest.test.ts", "TypeScript", 0, 0, 15, 0, 0, 1, 16
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/postMoveComputation.test.ts", "TypeScript", 0, 0, 261, 0, 15, 45, 321
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/checkForCheck.ts", "TypeScript", 0, 0, 159, 0, 12, 31, 202
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/moveGeneratingFunctions.ts", "TypeScript", 0, 0, 415, 0, 26, 60, 501
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/Chessboard.css", "CSS", 0, 0, 0, 0, 0, 1, 1
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/Chessboard.tsx", "TypeScript JSX", 0, 32, 0, 0, 0, 4, 36
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/index.css", "CSS", 0, 0, 0, 3, 0, 0, 3
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/main.tsx", "TypeScript JSX", 0, 9, 0, 0, 0, 2, 11
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/enums.ts", "TypeScript", 0, 0, 48, 0, 4, 7, 59
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/helperFunctionsForTest.ts", "TypeScript", 0, 0, 16, 0, 0, 3, 19
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/types.ts", "TypeScript", 0, 0, 31, 0, 0, 5, 36
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/utility.ts", "TypeScript", 0, 0, 50, 0, 0, 11, 61
+"/Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/vite-env.d.ts", "TypeScript", 0, 0, 0, 0, 1, 1, 2
+"Total", "-", 1, 53, 2642, 40, 184, 416, 3336

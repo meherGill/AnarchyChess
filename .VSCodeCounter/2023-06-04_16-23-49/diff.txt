@@ -1,0 +1,70 @@
+Date : 2023-06-04 16:23:49
+Directory : /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic
+Total : 31 files,  -895 codes, -49 comments, -74 blanks, all -1018 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| CSS            |          1 |         -3 |          0 |          0 |         -3 |
+| TypeScript     |          9 |       -144 |          3 |        -26 |       -167 |
+| TypeScript JSX |          6 |       -202 |        -50 |        -34 |       -286 |
+| XML            |         15 |       -546 |         -2 |        -14 |       -562 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                      |         31 |       -895 |        -49 |        -74 |     -1,018 |
+| . (Files)                                                                                                                              |          1 |          6 |          6 |         -1 |         11 |
+| ..                                                                                                                                     |         29 |       -929 |        -57 |        -78 |     -1,064 |
+| ../..                                                                                                                                  |         25 |       -751 |         -7 |        -50 |       -808 |
+| ../.. (Files)                                                                                                                          |          4 |        -27 |         -1 |         -7 |        -35 |
+| ../../assets                                                                                                                           |         15 |       -546 |         -2 |        -14 |       -562 |
+| ../../assets (Files)                                                                                                                   |          1 |         -1 |          0 |          0 |         -1 |
+| ../../assets/Pieces                                                                                                                    |         14 |       -545 |         -2 |        -14 |       -561 |
+| ../../shared                                                                                                                           |          6 |       -178 |         -4 |        -29 |       -211 |
+| ../Chessboard                                                                                                                          |          4 |       -178 |        -50 |        -28 |       -256 |
+| ../Chessboard (Files)                                                                                                                  |          2 |       -119 |        -49 |        -18 |       -186 |
+| ../Chessboard/ChessPieces                                                                                                              |          2 |        -59 |         -1 |        -10 |        -70 |
+| Tests                                                                                                                                  |          1 |         28 |          2 |          5 |         35 |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                                                               | language       | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/App.tsx                                                 | TypeScript JSX |        -15 |          0 |         -4 |        -19 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/black_bishop.svg                          | XML            |        -12 |          0 |         -1 |        -13 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/black_king.svg                            | XML            |        -12 |          0 |         -1 |        -13 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/black_knight.svg                          | XML            |        -22 |          0 |         -1 |        -23 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/black_knook.svg                           | XML            |       -172 |         -1 |         -1 |       -174 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/black_pawn.svg                            | XML            |         -5 |          0 |         -1 |         -6 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/black_queen.svg                           | XML            |        -26 |          0 |         -2 |        -28 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/black_rook.svg                            | XML            |        -39 |          0 |         -1 |        -40 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/white_bishop.svg                          | XML            |        -12 |          0 |         -1 |        -13 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/white_king.svg                            | XML            |         -9 |          0 |          0 |         -9 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/white_knight.svg                          | XML            |        -19 |          0 |         -1 |        -20 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/white_knook.svg                           | XML            |       -172 |         -1 |         -1 |       -174 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/white_pawn.svg                            | XML            |         -5 |          0 |         -1 |         -6 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/white_queen.svg                           | XML            |        -15 |          0 |         -1 |        -16 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/Pieces/white_rook.svg                            | XML            |        -25 |          0 |         -1 |        -26 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/assets/react.svg                                        | XML            |         -1 |          0 |          0 |         -1 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/ChessLogic.ts                     | TypeScript     |          6 |          6 |         -1 |         11 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/ChessLogic/Tests/pawnPromotionTest.test.ts   | TypeScript     |         28 |          2 |          5 |         35 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/ChessPieces/ChessPieces.tsx       | TypeScript JSX |        -27 |         -1 |         -6 |        -34 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/ChessPieces/ChessPiecesMapped.tsx | TypeScript JSX |        -32 |          0 |         -4 |        -36 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/ChessSquare.tsx                   | TypeScript JSX |        -47 |        -48 |         -8 |       -103 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/components/Chessboard/Chessboard.tsx                    | TypeScript JSX |        -72 |         -1 |        -10 |        -83 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/index.css                                               | CSS            |         -3 |          0 |          0 |         -3 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/main.tsx                                                | TypeScript JSX |         -9 |          0 |         -2 |        -11 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/Contexts.ts                                      | TypeScript     |         -1 |          0 |          0 |         -1 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/chessboardConfigs.ts                             | TypeScript     |        -32 |          0 |         -4 |        -36 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/enums.ts                                         | TypeScript     |        -48 |         -4 |         -6 |        -58 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/helperFunctionsForTest.ts                        | TypeScript     |        -16 |          0 |         -3 |        -19 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/types.ts                                         | TypeScript     |        -31 |          0 |         -5 |        -36 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/shared/utility.ts                                       | TypeScript     |        -50 |          0 |        -11 |        -61 |
+| /Users/meherwangill/programming/anarchy-chess/AnarchyChess/AnarchChessVite/src/vite-env.d.ts                                           | TypeScript     |          0 |         -1 |         -1 |         -2 |
+| Total                                                                                                                                  |                |       -895 |        -49 |        -74 |     -1,018 |
++----------------------------------------------------------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
