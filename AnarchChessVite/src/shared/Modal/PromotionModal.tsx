@@ -1,17 +1,27 @@
-import { useContext, useRef } from "react";
+import { MouseEventHandler, useContext, useRef } from "react";
 import { ChessLogicContext } from "@/App";
-import { ChessPiecesName, PlayerColor, TypeOfChessPiece } from "@shared/enums";
-import { getChessPieceNameFor } from "../../components/ChessLogic/ChessLogic";
+import {
+    ChessPiecesName,
+    MoveAction,
+    PlayerColor,
+    TypeOfChessPiece,
+} from "@shared/enums";
+import { getChessPieceNameFor } from "@components/ChessLogic/ChessLogic";
 import chessPieceToIconMapper from "@shared/ChessPiecesMapped";
+import { ISquareCoordinate } from "@shared/types";
 
 interface PromotionModalPropsInterface {
     callBack: Function;
     closeModal: Function;
+    pieceFrom: ISquareCoordinate;
+    pieceTo: ISquareCoordinate;
 }
 
 const PromotionModal = ({
     callBack,
     closeModal,
+    pieceFrom,
+    pieceTo,
 }: PromotionModalPropsInterface) => {
     const chessLogicValue = useContext(ChessLogicContext);
 
@@ -35,6 +45,22 @@ const PromotionModal = ({
 
         const handleClick = (selectedTypeIndex: number) => {
             const typeOfPiece = optionsArr[selectedTypeIndex];
+            let pawnPromotionActionName;
+            switch (typeOfPiece) {
+                case TypeOfChessPiece.Bishop:
+                    pawnPromotionActionName = MoveAction.pawnPromotionBishop;
+                    break;
+                case TypeOfChessPiece.Rook:
+                    pawnPromotionActionName = MoveAction.pawnPromotionRook;
+                    break;
+                case TypeOfChessPiece.Knook:
+                    pawnPromotionActionName = MoveAction.pawnPromotionKnook;
+                    break;
+                case TypeOfChessPiece.Queen:
+                    pawnPromotionActionName = MoveAction.pawnPromotionQueen;
+                    break;
+            }
+            callBack(pieceFrom, pieceTo, pawnPromotionActionName);
         };
 
         return chessPiecesArr.map((chessPieceName, selectedTypeIndex) => {
@@ -50,14 +76,12 @@ const PromotionModal = ({
         });
     };
     return (
-        <div className="w-screen h-screen bg-neutral-800/95 absolute z-50 flex justify-center items-center">
-            <div className="flex flex-col justify-around items-center bg-neutral-900 rounded-md p-5 h-40">
-                <h2>Promote Pawn To</h2>
-                <ul className="flex justify-center items-center">
-                    {optionsToDisplay()}
-                </ul>
-            </div>
-        </div>
+        <>
+            <h2>Promote Pawn To</h2>
+            <ul className="flex justify-center items-center">
+                {optionsToDisplay()}
+            </ul>
+        </>
     );
 };
 

@@ -16,8 +16,9 @@ import PromotionModal from "@shared/Modal/PromotionModal";
 const Chessboard = () => {
     const [moveDone, setMoveDone] = useState(-1);
     const chessLogicValue = useContext(ChessLogicContext);
-    let { handleModal } = React.useContext(ModalContext) as {
-        handleModal: Function;
+    let { openModal, closeModal } = React.useContext(ModalContext) as {
+        closeModal: any;
+        openModal: any;
     };
 
     const sensors = useSensors(
@@ -93,16 +94,19 @@ const Chessboard = () => {
             /*
                 check if pawn promotion
             */
-            const checkPromotion =
+            let checkPromotion =
                 chessLogicValue!.checkIfNeedToProvidePawnPromotionOption(
                     coordFrom,
                     coordTo
                 );
             if (checkPromotion) {
-                handleModal(
+                checkPromotion = false;
+                openModal(
                     <PromotionModal
-                        callBack={() => {}}
-                        closeModal={handleModal}
+                        callBack={makePlayerMove}
+                        closeModal={closeModal}
+                        pieceFrom={coordFrom}
+                        pieceTo={coordTo}
                     />
                 );
             } else {
