@@ -139,6 +139,15 @@ class ChessLogic {
         this.postMoveComputation()
     }
 
+    getKingCoordForPlayer = (playerColor: PlayerColor = this.turnToPlay) : ISquareCoordinate => {
+        if (playerColor === PlayerColor.white){
+            return this.whiteKingPosition
+        }
+        else{
+            return this.blackKingPosition
+        }
+    }
+
     checkmateHandler = () => {
         this.mate = true
     }
@@ -800,7 +809,9 @@ class ChessLogic {
                 }
                 if (!validMoveOfCoord){
                     // coordTo is not a valid move in coordFrom
-                    return {valid:false, message: MoveGenerationMessage.pieceCantGoThere}
+                    let messageToReturn = MoveGenerationMessage.pieceCantGoThere
+                    if (this.checkIfCheckedCoord(coordFrom, coordTo)) messageToReturn = MoveGenerationMessage.checked
+                    return {valid:false, message: messageToReturn}
                 }
             }
             else{

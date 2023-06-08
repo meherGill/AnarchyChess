@@ -9,6 +9,7 @@ interface ChessSquarePropsInterface {
     row: number;
     column: number;
     piece: IChessPiece | null;
+    ref?: React.Ref<any>;
 }
 
 const ChessSquare = ({
@@ -44,7 +45,11 @@ const ChessSquare = ({
     }
 
     return (
-        <div ref={setNodeRef} className={`${bgToUse} h-20 w-20`}>
+        <div
+            ref={setNodeRef}
+            className={`${bgToUse} h-20 w-20`}
+            id={`id_${row}_${column}`}
+        >
             <div className="flex justify-center items-center h-full w-full text-black">
                 {getPieceValueFromIChessPiece(piece)}
             </div>

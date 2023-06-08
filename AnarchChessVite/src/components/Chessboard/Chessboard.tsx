@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
-import { ChessLogicContext } from "../../App";
+import React, { useContext, useMemo, useRef, useState } from "react";
+import "./Chessboard.css";
+import { ChessLogicContext } from "@/App";
 import ChessSquare from "./ChessSquare";
 import {
     ChessSquareColor,
@@ -24,6 +25,7 @@ export const PieceClickContext = React.createContext(
 const Chessboard = () => {
     const [moveDone, setMoveDone] = useState(-1);
     const chessLogicValue = useContext(ChessLogicContext);
+
     let { openModal, closeModal } = React.useContext(ModalContext) as {
         closeModal: any;
         openModal: any;
@@ -64,6 +66,7 @@ const Chessboard = () => {
                         column={column}
                         key={`${row}_${column}`}
                         piece={piece}
+                        // ref={refsById[row][column]}
                     />
                 );
                 if (color === ChessSquareColor.dark) {
@@ -90,7 +93,17 @@ const Chessboard = () => {
         );
         if (result.valid) {
             setMoveDone(moveDone * -1);
-        } else {
+        } else if (result.message === MoveGenerationMessage.checked) {
+            const kingCoords = chessLogicValue!.getKingCoordForPlayer();
+            const squareToAnimate = document.querySelector(
+                `#id_${kingCoords!.row}_${kingCoords!.column}`
+            );
+            squareToAnimate!.classList.add("animate-wiggle");
+            squareToAnimate!.classList.add("bg-rose-200");
+            setTimeout(() => {
+                squareToAnimate!.classList.remove("animate-wiggle");
+                squareToAnimate!.classList.remove("bg-rose-200");
+            }, 500);
         }
     };
     const onDragEndHandler = (e: DragEndEvent) => {
