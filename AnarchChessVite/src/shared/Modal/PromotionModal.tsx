@@ -9,6 +9,7 @@ import {
 import { getChessPieceNameFor } from "@components/ChessLogic/ChessLogic";
 import chessPieceToIconMapper from "@shared/ChessPiecesMapped";
 import { ISquareCoordinate } from "@shared/types";
+import { close } from "inspector";
 
 interface PromotionModalPropsInterface {
     callBack: Function;
@@ -61,6 +62,7 @@ const PromotionModal = ({
                     break;
             }
             callBack(pieceFrom, pieceTo, pawnPromotionActionName);
+            closeModal();
         };
 
         return chessPiecesArr.map((chessPieceName, selectedTypeIndex) => {

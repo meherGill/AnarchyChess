@@ -19,14 +19,13 @@ describe("One full game, using playerMadeMove functions" , () => {
     const chessisfy = new ChessLogic(chessboard)
     
     const snapshotBeginning = cloneDeep(chessisfy)
-    let expectedSnapshot : ChessLogic
 
     let result
     it ("rejects moves made by white player on black pieces" , () => {
 
         result = chessisfy.playerMadeMove(
             {row: 1, column: 0}, {row: 2, column: 0}
-        )
+        ).valid
         expect(result).toEqual(false)
         const snapshot_ = cloneDeep(chessisfy)
         expect(snapshotBeginning).toEqual(snapshot_)
@@ -35,7 +34,7 @@ describe("One full game, using playerMadeMove functions" , () => {
     it ("rejects incorrect moves made by white player on white piece" , () => {
         result = chessisfy.playerMadeMove(
             {row: 1, column: 0}, {row: 6, column: 0}
-        )
+        ).valid
         expect(result).toEqual(false)
         const snapshot_ = cloneDeep(chessisfy)
         expect(snapshotBeginning).toEqual(snapshot_)
@@ -45,19 +44,19 @@ describe("One full game, using playerMadeMove functions" , () => {
         let spy = vi.spyOn(chessisfy, 'checkmateHandler')
         result = chessisfy.playerMadeMove(
             {row: 6, column: 6}, {row: 4, column: 6}
-        )
+        ).valid
         expect(result).toEqual(true)
         const snapshot2 = cloneDeep(chessisfy)
         expect(snapshot2).not.toEqual(snapshotBeginning)
         
-        result = chessisfy.playerMadeMove({row: 1, column: 4}, {row: 2, column: 4})
+        result = chessisfy.playerMadeMove({row: 1, column: 4}, {row: 2, column: 4}).valid
         expect(result).toEqual(true)
 
-        result = chessisfy.playerMadeMove({row: 6, column: 5}, {row: 4, column: 5})
+        result = chessisfy.playerMadeMove({row: 6, column: 5}, {row: 4, column: 5}).valid
         expect(result).toEqual(true)
 
         expect(spy).toHaveBeenCalledTimes(0)
-        result = chessisfy.playerMadeMove({row: 0, column: 3}, {row: 4, column: 7})
+        result = chessisfy.playerMadeMove({row: 0, column: 3}, {row: 4, column: 7}).valid
         expect(result).toEqual(true)
 
         expect(spy).toHaveBeenCalledTimes(1)

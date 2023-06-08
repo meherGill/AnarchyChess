@@ -1,7 +1,11 @@
 import React, { useContext, useState } from "react";
 import { ChessLogicContext } from "../../App";
 import ChessSquare from "./ChessSquare";
-import { ChessSquareColor, MoveAction } from "@shared/enums";
+import {
+    ChessSquareColor,
+    MoveAction,
+    MoveGenerationMessage,
+} from "@shared/enums";
 import {
     DndContext,
     DragEndEvent,
@@ -12,6 +16,10 @@ import {
 import { ISquareCoordinate } from "@shared/types";
 import { ModalContext } from "@shared/Contexts/ModalContext";
 import PromotionModal from "@shared/Modal/PromotionModal";
+
+export const PieceClickContext = React.createContext(
+    (pieceCoord: ISquareCoordinate) => {}
+);
 
 const Chessboard = () => {
     const [moveDone, setMoveDone] = useState(-1);
@@ -80,9 +88,9 @@ const Chessboard = () => {
             coordTo,
             action
         );
-        if (result) {
-            console.log(chessLogicValue!.currentBoard);
+        if (result.valid) {
             setMoveDone(moveDone * -1);
+        } else {
         }
     };
     const onDragEndHandler = (e: DragEndEvent) => {
@@ -114,20 +122,25 @@ const Chessboard = () => {
             }
         }
     };
+
+    const onPieceClickOnlyHandler = (pieceCoord: ISquareCoordinate) => {
+        const squaresForPiece =
+            chessLogicValue!.memoizedLegalMovesMap.get(pieceCoord);
+    };
     return (
         <>
-            <DndContext onDragEnd={onDragEndHandler} sensors={sensors}>
-                <div className="w-fit h-fit grid grid-cols-8">
-                    {displayChessBoard()}
-                    {chessLogicValue!.mate ? (
-                        <div className="absolute h-screen w-screen bg-slate-100">
-                            <h1>Checkmate</h1>
-                        </div>
-                    ) : (
-                        ""
-                    )}
-                </div>
-            </DndContext>
+            <PieceClickContext.Provider value={onPieceClickOnlyHandler}>
+                <DndContext onDragEnd={onDragEndHandler} sensors={sensors}>
+                    <div className="w-fit h-fit grid grid-cols-8">
+                        {displayChessBoard()}
+                        {chessLogicValue!.mate ? (
+                            <div className="absolute h-screen w-screen bg-slate-100">
+                                <h1>Checkmate</h1>
+                            </div>
+                        ) : null}
+                    </div>
+                </DndContext>
+            </PieceClickContext.Provider>
         </>
     );
 };

@@ -44,11 +44,7 @@ const ChessSquare = ({
     }
 
     return (
-        <div
-            ref={setNodeRef}
-            className={`${bgToUse} h-20 w-20`}
-            onClick={() => console.log("okc")}
-        >
+        <div ref={setNodeRef} className={`${bgToUse} h-20 w-20`}>
             <div className="flex justify-center items-center h-full w-full text-black">
                 {getPieceValueFromIChessPiece(piece)}
             </div>

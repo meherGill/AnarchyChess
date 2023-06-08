@@ -194,3 +194,28 @@ describe("correctly detects if king is in check", () => {
     })
     
 })
+
+describe ("correctly checks if the given move will put king in check using memoizedMap" , () => {
+    let boardConfigNew = [
+        [ChessPiecesName.whiteKing, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, ChessPiecesName.blackQueen, null, null, ChessPiecesName.whitePawn],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null, null],
+        [null, null, null, ChessPiecesName.blackKing, null, null, null, null],
+    ];
+
+
+    const chessifyNew = new ChessLogic(boardConfigNew)
+
+    it ("doesnt make a piece move if that move is not protecting king from check, which otherwise would have been valid" , () => {
+        let coordFrom = {row:4, column: 7}
+        let coordTo = {row: 3, column: 7}
+        let res = chessifyNew.playerMadeMove(coordFrom, coordTo)
+        expect(res.valid).toEqual(false)
+        let checkIfChecky = chessifyNew.checkIfCheckedCoord(coordFrom, coordTo)
+        expect(checkIfChecky).toEqual(true)
+    })
+})

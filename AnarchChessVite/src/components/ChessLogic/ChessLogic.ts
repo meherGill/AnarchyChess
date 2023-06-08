@@ -1,4 +1,4 @@
-import { ChessPiecesName, MoveAction, PlayerColor, TypeOfChessPiece } from "@enums";
+import { ChessPiecesName, MoveAction, MoveGenerationMessage, PlayerColor, TypeOfChessPiece } from "@enums";
 import { IChessPiece, IGeneratedMoves, IMove, IMoveHistory, IMoveType, ISquareCoordinate } from "@shared/types";
 import { vanillaBishopLikeMoves, knightLikeMoves, generateIlVaticano, rookLikeMoves, pawnLikeMoves, kingLikeMoves, returnCastlingCoord } from "./moveGeneratingFunctions";
 import { checkIfGivenKingIsInCheck, checkIfGivenPositionIsInCheck } from "./checkForCheck";
@@ -95,8 +95,10 @@ class ChessLogic {
     uniquePiecesPresentOnBoardForOppositePlayer: Set<TypeOfChessPiece> = new Set()
     //pre-generated moves
     memoizedLegalMovesMap: CoordMapper<ISquareCoordinate, Array<IGeneratedMoves>> = new CoordMapper()
+    memoizedCheckedSquaresMap: CoordMapper<ISquareCoordinate, Array<IGeneratedMoves>> = new CoordMapper()
 
-    mate: any = false //TODO: change  later
+    mate: any = false //TODO: change type later
+    stalemate: any = false
 
     constructor(initialBoard: Array<Array<ChessPiecesName | null>>) {
         this.currentBoard = [];
@@ -142,7 +144,7 @@ class ChessLogic {
     }
 
     stalemateHandler = () => {
-        
+        this.stalemate = true
     }
     switchTurns = () => {
         if (this.turnToPlay === PlayerColor.white) 
@@ -151,7 +153,7 @@ class ChessLogic {
             this.turnToPlay = PlayerColor.white
     }
 
-    _checkIfMoveLegal = (move: IMoveType) : boolean => {
+    _checkIfMoveCausesKingToBeInCheck = (move: IMoveType) : boolean => {
         const val = this.moveWithAction(move.from, {coord: move.to, action: move.action})
         if (val){
             if (!(this._isKingInCheck(this.turnToPlay, this.uniquePiecesPresentOnBoardForOppositePlayer).inCheck)){
@@ -393,7 +395,7 @@ class ChessLogic {
         //check if all forced moves result in a checkmate
         let isCheckmate = true
         for (let move of this.forcedMoves){
-            if (this._checkIfMoveLegal(move)){
+            if (this._checkIfMoveCausesKingToBeInCheck(move)){
                 isCheckmate = false
                 break
             }
@@ -620,6 +622,46 @@ class ChessLogic {
         return moveArr
     }
 
+    
+    checkIfNeedToProvidePawnPromotionOption = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate) : boolean => {
+        const pieceAtCoordFrom = _getPieceOnCoord(coordFrom, this.currentBoard)
+        if (pieceAtCoordFrom){
+            if ((returnTypeOfPiece(pieceAtCoordFrom.name) === TypeOfChessPiece.Pawn) 
+            && (returnColorOfPiece(pieceAtCoordFrom.name) === this.turnToPlay)){
+                let lastRowForPiece: number
+                if (this.turnToPlay === PlayerColor.white){
+                    lastRowForPiece = 0
+                }
+                else{
+                    lastRowForPiece = 7
+                }
+                let generatedPawnMoves = this.memoizedLegalMovesMap.get(coordFrom)
+                for (let move of generatedPawnMoves){
+                    if ((move.coord.row === lastRowForPiece) 
+                    && (move.coord.row === coordTo.row)
+                    && (move.coord.column === coordTo.column)){
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    checkIfCheckedCoord = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate, action?: MoveAction) => {
+        // Currently not using the action argument properly due to the fact that its not needed
+        // There should be no instance where coordFrom , and coordTo remain fixed but changing the action would determine if king is in check or not
+        // Also currently, pawn promotion is the only action where, you can have multiple actions for the same coordTo and coordFrom
+        const values = this.memoizedCheckedSquaresMap.get(coordFrom)
+        for (const move of values){
+            if (areCoordsEqual(coordTo, move.coord) && (!action || action === move.action)){
+                return true
+            }
+        }
+        return false
+
+    }
+
     postMoveComputation = () => {
         // very heavy function
         
@@ -632,6 +674,8 @@ class ChessLogic {
         */
     
         const  allLegalMovesMap = new CoordMapper()
+        const  allCheckedSquaresMap = new CoordMapper()
+
         if (!this._updateForcedMovesAsideFromCheckFor(this.turnToPlay)){
             // this means checkmate
             return
@@ -657,19 +701,23 @@ class ChessLogic {
         
         for (const [coordFrom, generatedMovesArr ]  of allPseudoLegalMovesMap.entries()){
             let legalMovesForThisCoord : IGeneratedMoves[] = []
+            let checkedMovesForThisCoord: IGeneratedMoves[] = []
             for (const [index, move] of generatedMovesArr.entries()){
 
-                if (this._checkIfMoveLegal({from: coordFrom, to: move.coord, action: move.action})){
+                if (this._checkIfMoveCausesKingToBeInCheck({from: coordFrom, to: move.coord, action: move.action})){
                     legalMovesForThisCoord.push(move)
                     atleastOneMoveIsSafe = true
                 }
-
+                else{
+                    checkedMovesForThisCoord.push(move)
+                }
             }
-
             allLegalMovesMap.set(coordFrom, legalMovesForThisCoord)
+            allCheckedSquaresMap.set(coordFrom, checkedMovesForThisCoord)
         }
 
         this.memoizedLegalMovesMap = allLegalMovesMap
+        this.memoizedCheckedSquaresMap = allCheckedSquaresMap
 
         if (!atleastOneMoveIsSafe && inCheck){
             this.checkmateHandler()
@@ -678,40 +726,9 @@ class ChessLogic {
             this.stalemateHandler()
         }
     }
-
-    checkIfNeedToProvidePawnPromotionOption = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate) : boolean => {
-        const pieceAtCoordFrom = _getPieceOnCoord(coordFrom, this.currentBoard)
-        if (pieceAtCoordFrom){
-            if ((returnTypeOfPiece(pieceAtCoordFrom.name) === TypeOfChessPiece.Pawn) 
-                && (returnColorOfPiece(pieceAtCoordFrom.name) === this.turnToPlay)){
-                    let lastRowForPiece: number
-                    if (this.turnToPlay === PlayerColor.white){
-                        lastRowForPiece = 0
-                    }
-                    else{
-                        lastRowForPiece = 7
-                    }
-                    // if (coordTo.row === lastRowForPiece){
-                    //     return true
-                    // }
-                    // else{
-                    //     return false
-                    // }
-                    let generatedPawnMoves = this.memoizedLegalMovesMap.get(coordFrom)
-                    for (let move of generatedPawnMoves){
-                        if ((move.coord.row === lastRowForPiece) 
-                            && (move.coord.row === coordTo.row)
-                            && (move.coord.column === coordTo.column)){
-                                return true
-                        }
-                    }
-            }
-        }
-        return false
-    }
-
+    
     playerMadeMove = (coordFrom: ISquareCoordinate, coordTo: ISquareCoordinate, pawnPromotionAction?: MoveAction) => {
-
+        
         /*
         Assumption: 
         1. The king is correctly not in checkmate or stalemate, so no need to check for that in the beginning
@@ -730,7 +747,7 @@ class ChessLogic {
         2. if forced move is empty then
             - check if coordFrom has a piece on it and that piece belongs to the player whose turn it is currently
             - according to assumption 3, pseudo legal moves for that piece have already been generated, 
-              then we check if our given coord pair is in that object of generated moves
+                then we check if our given coord pair is in that object of generated moves
                 - if no, then we return false
                 - if yes, then check if after making the move will the king be in check hence making it an illegal move
                     - if yes, then return false
@@ -743,73 +760,73 @@ class ChessLogic {
             - update forced moves object for player2
             - if every move in forcedMove object results in check for player2, then its a checkmate againh
         */
-       
 
-        const preMoveValidation = () : false | [MoveAction | null | undefined] => {
-            if (this.forcedMoves.length > 0){
-                // in forced moves
 
-                const generatedMoves = this.memoizedLegalMovesMap.get(coordFrom)
-                if (generatedMoves){
-                    for (let move of generatedMoves){
-                        if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
-                        && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
-                            return [move.action]
-                        }
+    const preMoveValidation = () : {valid: boolean, message?: MoveGenerationMessage, toDo?:MoveAction | null | undefined } => {
+        if (this.forcedMoves.length > 0){
+            // in forced moves
+
+            const generatedMoves = this.memoizedLegalMovesMap.get(coordFrom)
+            if (generatedMoves){
+                for (let move of generatedMoves){
+                    if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
+                    && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
+                        return {valid: true, toDo: move.action}
                     }
-                    return false 
                 }
-                else{
-                    return false
-                }
+                return {valid:false, message: MoveGenerationMessage.aForcedMoveAvailable} 
             }
-            else {
-                // no forced moves
-                 //check if coordFrom belongs to wrong turn to play:
-                if (returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name) !== this.turnToPlay){
-                    return false
-                }
-                let moves = this.memoizedLegalMovesMap.get(coordFrom)
-                let validMoveOfCoord = false
-                let action = null
-                if (moves){
-                    for (let move of moves){
-                        if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
-                                && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
-                            
-                            validMoveOfCoord = true
-                            action = move.action
-                        }
-                    }
-                    if (!validMoveOfCoord){
-                        // coordFrom is not a valid move in coordTo
-                        return false
-                    }
-                }
-                else{
-                    // there were no moves generated for that piece
-                    return false
-                }
-    
-                // make the move
-                return [action]
-               
+            else{
+                return {valid:false, message: MoveGenerationMessage.aForcedMoveAvailable}
             }
         }
-        
-        const valid = preMoveValidation()
-        if (valid){
-            const action = valid[0]
-            this.moveWithAction(coordFrom, {coord: coordTo, action: action})
-            this.switchTurns()
-            this.postMoveComputation()
-            return true
+        else {
+            // no forced moves
+                //check if coordFrom belongs to wrong turn to play:
+            if (returnColorOfPiece(_getPieceOnCoord(coordFrom, this.currentBoard)!.name) !== this.turnToPlay){
+                return {valid:false, message: MoveGenerationMessage.notYourTurnMate }
+            }
+            let moves = this.memoizedLegalMovesMap.get(coordFrom)
+            let validMoveOfCoord = false
+            let action = null
+            if (moves){
+                for (let move of moves){
+                    if (((move.coord.column === coordTo.column) && (move.coord.row === coordTo.row))
+                            && (!pawnPromotionAction || (move.action === pawnPromotionAction))){
+                        
+                        validMoveOfCoord = true
+                        action = move.action
+                    }
+                }
+                if (!validMoveOfCoord){
+                    // coordTo is not a valid move in coordFrom
+                    return {valid:false, message: MoveGenerationMessage.pieceCantGoThere}
+                }
+            }
+            else{
+                // there were no moves generated for that piece
+                return {valid:false, message: MoveGenerationMessage.pieceCantGoThere}
+            }
 
-        }
-        else{
-            return false
+            // make the move
+            return {valid: true, toDo: action}
+            
         }
     }
-} 
+
+    const preMoveValidationObject = preMoveValidation()
+    if (preMoveValidationObject.valid){
+        const action = preMoveValidationObject.toDo
+        this.moveWithAction(coordFrom, {coord: coordTo, action: action})
+        this.switchTurns()
+        this.postMoveComputation()
+        return {valid: true}
+
+    }
+    else{
+        return {valid: false, message: preMoveValidationObject.message}
+    }
+        }
+    } 
 
 export default ChessLogic;

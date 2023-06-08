@@ -56,6 +56,6 @@ class CoordMapper<K,V> extends Map {
         }
     }
 
- 
 }
+
 export {CoordMapper}

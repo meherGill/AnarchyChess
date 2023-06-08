@@ -231,6 +231,5 @@ describe("ChessLogic class", () => {
 
         const chessifyNewBoardConfig = new ChessLogic(boardConfigNew)
         let res = pawnLikeMoves({coord: {row: 1, column: 1}, currentBoard: chessifyNewBoardConfig.currentBoard, lastMovePlayedArr: chessifyNewBoardConfig.lastMovePlayedArr})
-        console.log(res)
     })
 })

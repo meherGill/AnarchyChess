@@ -56,3 +56,10 @@ export enum MoveAction{
     pawnPromotionQueen = `PAWN_PROMOTION_QUEEN`,
     pawnPromotionRook = `PAWN_PROMOTION_ROOK`,
 }
+
+export enum MoveGenerationMessage{
+    checked = `King in check`,
+    aForcedMoveAvailable = `Forced move available`,
+    pieceCantGoThere = `Not a valid move`,
+    notYourTurnMate = `Not your turn mate`
+}

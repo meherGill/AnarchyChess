@@ -88,7 +88,7 @@ describe("it correctly does an en passant check" , () => {
         ];
 
         const chessifyNewBoard = new ChessLogic(newBoard)
-        let res = chessifyNewBoard.playerMadeMove({row: 4, column: 0}, {row: 3, column: 0})
+        let res = chessifyNewBoard.playerMadeMove({row: 4, column: 0}, {row: 3, column: 0}).valid
         expect(res).toEqual(true)
         expect(chessifyNewBoard.currentBoard[3]).toEqual([
             { name: ChessPiecesName.whitePawn, lastPosition: { row: 4, column: 0 } },
@@ -111,7 +111,7 @@ describe("it correctly does an en passant check" , () => {
             null
         ])
 
-        res = chessifyNewBoard.playerMadeMove({row: 1, column: 1},{row: 3, column: 1})
+        res = chessifyNewBoard.playerMadeMove({row: 1, column: 1},{row: 3, column: 1}).valid
         expect(res).toEqual(true)
         expect(chessifyNewBoard.currentBoard[3]).toEqual([
             { name: ChessPiecesName.whitePawn, lastPosition: { row: 4, column: 0 } },
@@ -124,11 +124,11 @@ describe("it correctly does an en passant check" , () => {
             null
         ])
 
-        let badMove = chessifyNewBoard.playerMadeMove({row: 6, column:7} , {row: 0, column: 0})
+        let badMove = chessifyNewBoard.playerMadeMove({row: 6, column:7} , {row: 0, column: 0}).valid
         expect(badMove).toEqual(false)
-        res = chessifyNewBoard.playerMadeMove({row: 3, column:0} , {row: 2, column: 1})
+        res = chessifyNewBoard.playerMadeMove({row: 3, column:0} , {row: 2, column: 1}).valid
         expect(res).toEqual(true)
-        res = chessifyNewBoard.playerMadeMove({row: 1, column: 2}, {row: 2, column: 1})
+        res = chessifyNewBoard.playerMadeMove({row: 1, column: 2}, {row: 2, column: 1}).valid
         expect(res).toEqual(true)
     })
 })
