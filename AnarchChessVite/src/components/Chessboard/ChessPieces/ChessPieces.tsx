@@ -20,6 +20,7 @@ const ChessPiece = ({ toDisplay, row, column }: ChessPiecePropsInterface) => {
 
     const style = {
         transform: CSS.Translate.toString(transform),
+        touchAction: "none",
     };
 
     return (

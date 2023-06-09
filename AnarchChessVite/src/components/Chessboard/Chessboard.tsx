@@ -3,6 +3,7 @@ import {
     DndContext,
     DragEndEvent,
     PointerSensor,
+    TouchSensor,
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
@@ -40,6 +41,11 @@ const Chessboard = () => {
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(TouchSensor, {
             activationConstraint: {
                 distance: 8,
             },
