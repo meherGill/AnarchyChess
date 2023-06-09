@@ -263,6 +263,8 @@ describe("ChessLogic class", () => {
                 [
                     { row: 1, column: 1 },
                     { row: 1, column: 2 },
+                    { row: 0, column: 2 },
+                    { row: 0, column: 0 },
                 ].sort(customSortFn)
             );
 
@@ -419,14 +421,24 @@ describe("ChessLogic class, specific for king", () => {
         expect(whiteKingResult).toEqual([
             {coord: {row: 4, column: 3}},
             {coord: {row: 3, column: 5}},
-            {coord: {row: 2, column: 4}}
+            {coord: {row: 2, column: 4}},
+            {coord: {row: 4, column: 4}},
+            {coord: {row: 4, column: 5}},
+            {coord: {row: 2, column: 3}},
+            {coord: {row: 3, column: 3}},
+            {coord: {row: 2, column: 5}},
         ].sort(customSortFnWithActions))
 
         const blackKingResult = chessifyKing._generatePseduoLegalMovesFor(chessifyKing.blackKingPosition).sort(customSortFnWithActions)
         expect(blackKingResult).toEqual([
             {coord: {row:6, column: 5}},
             {coord: {row:7, column: 7}},
+            {coord: {row:5, column: 5}},
+            {coord: {row:7, column: 5}},
             {coord: {row:5, column: 7}},
+            {coord: {row:5, column: 6}},
+            {coord: {row:7, column: 6}},
+            {coord: {row:6, column: 7}},
         ].sort(customSortFnWithActions))
     })
 })

@@ -70,6 +70,7 @@ describe("correctly check if king can castle or not", () => {
         const resultWhiteKingGenMoves = chessifyBlackShortSideCastlingOnly._generatePseduoLegalMovesFor({row: 7, column: 4}).sort(customSortFnWithActions)
         expect(resultWhiteKingGenMoves).toEqual([
             {coord: {row: 6, column: 3}},
+            {coord: {row: 6, column: 4}},
             {coord: {row: 6, column: 5}},
             {coord: {row: 7, column: 3}},
             {coord: {row: 7, column: 5}},
