@@ -47,7 +47,7 @@ const ChessSquare = ({
     return (
         <div
             ref={setNodeRef}
-            className={`${bgToUse} h-20 w-20`}
+            className={`${bgToUse} h-[80px] w-[80px]`}
             id={`id_${row}_${column}`}
         >
             <div className="flex justify-center items-center h-full w-full text-black">

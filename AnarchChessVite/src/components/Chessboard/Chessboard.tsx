@@ -1,12 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from "react";
-import "./Chessboard.css";
-import { ChessLogicContext } from "@/App";
-import ChessSquare from "./ChessSquare";
-import {
-    ChessSquareColor,
-    MoveAction,
-    MoveGenerationMessage,
-} from "@shared/enums";
+import React, { useContext, useState } from "react";
 import {
     DndContext,
     DragEndEvent,
@@ -14,9 +6,18 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
+import { ChessLogicContext } from "@/App";
+import ChessSquare from "./ChessSquare";
+import {
+    ChessSquareColor,
+    MoveAction,
+    MoveGenerationMessage,
+} from "@shared/enums";
 import { ISquareCoordinate } from "@shared/types";
 import { ModalContext } from "@shared/Contexts/ModalContext";
 import PromotionModal from "@shared/Modal/PromotionModal";
+import "./Chessboard.css";
+import { TurnToPlayContext } from "@shared/Contexts/TurnToPlayContext";
 
 export const PieceClickContext = React.createContext(
     (pieceCoord: ISquareCoordinate) => {}
@@ -25,6 +26,7 @@ export const PieceClickContext = React.createContext(
 const Chessboard = () => {
     const [moveDone, setMoveDone] = useState(-1);
     const chessLogicValue = useContext(ChessLogicContext);
+    const turnToPlayValue = useContext(TurnToPlayContext);
 
     let { openModal, closeModal } = React.useContext(ModalContext) as {
         closeModal: any;
@@ -93,6 +95,8 @@ const Chessboard = () => {
         );
         if (result.valid) {
             setMoveDone(moveDone * -1);
+            turnToPlayValue.toggleTurnToPlay();
+            toShowMateModal();
         } else if (result.message === MoveGenerationMessage.checked) {
             //wiggle the square
             const kingCoords = chessLogicValue!.getKingCoordForPlayer();
@@ -100,11 +104,13 @@ const Chessboard = () => {
                 `#id_${kingCoords!.row}_${kingCoords!.column}`
             );
             squareToAnimate!.classList.add("animate-wiggle");
-            squareToAnimate!.classList.add("bg-rose-200");
+            squareToAnimate!.classList.add("bg-red-500");
+            squareToAnimate!.classList.add("opacity-80");
             setTimeout(() => {
                 squareToAnimate!.classList.remove("animate-wiggle");
-                squareToAnimate!.classList.remove("bg-rose-200");
-            }, 500);
+                squareToAnimate!.classList.remove("bg-red-500");
+                squareToAnimate!.classList.remove("opacity-80");
+            }, 5000);
         }
     };
     const onDragEndHandler = (e: DragEndEvent) => {
@@ -137,6 +143,16 @@ const Chessboard = () => {
         }
     };
 
+    const toShowMateModal = () => {
+        if (chessLogicValue!.mate) {
+            openModal(
+                <h2 className="text-white">
+                    {chessLogicValue!.turnToPlay} Sacrificed the KINGGGG!!!!
+                </h2>
+            );
+        }
+    };
+
     const onPieceClickOnlyHandler = (pieceCoord: ISquareCoordinate) => {
         const squaresForPiece =
             chessLogicValue!.memoizedLegalMovesMap.get(pieceCoord);
@@ -145,13 +161,10 @@ const Chessboard = () => {
         <>
             <PieceClickContext.Provider value={onPieceClickOnlyHandler}>
                 <DndContext onDragEnd={onDragEndHandler} sensors={sensors}>
-                    <div className="w-fit h-fit grid grid-cols-8">
-                        {displayChessBoard()}
-                        {chessLogicValue!.mate ? (
-                            <div className="absolute h-screen w-screen bg-slate-100">
-                                <h1>Checkmate</h1>
-                            </div>
-                        ) : null}
+                    <div className="flex justify-center items-center">
+                        <div className="w-fit h-fit grid grid-cols-8">
+                            {displayChessBoard()}
+                        </div>
                     </div>
                 </DndContext>
             </PieceClickContext.Provider>
