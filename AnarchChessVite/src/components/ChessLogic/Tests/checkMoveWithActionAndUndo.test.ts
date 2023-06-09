@@ -64,7 +64,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
     it ("correctly moves the pieces for chessifySimpleCase", () => {
         const coordFrom = {row:2, column: 0}
         chessifySimpleCase.turnToPlay = PlayerColor.black
-        chessifySimpleCase.moveWithAction(coordFrom, {coord: {row: 3, column: 0}})
+        chessifySimpleCase.moveWithAction(coordFrom, {coord: {row: 3, column: 0}}, true)
         expect(chessifySimpleCase.currentBoard[2]).toEqual([null, {name: ChessPiecesName.whitePawn, lastPosition: null}, null,null, null, null, null, null],)
         expect(chessifySimpleCase.currentBoard[3]).toEqual([{name: ChessPiecesName.blackKing , lastPosition: coordFrom}, null, null,null, null, null, null, null],)
         
@@ -72,7 +72,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
         coordFrom.column = 0
 
         chessifySimpleCase.turnToPlay = PlayerColor.black
-        chessifySimpleCase.moveWithAction(coordFrom, {coord: {row: 2, column: 1}})
+        chessifySimpleCase.moveWithAction(coordFrom, {coord: {row: 2, column: 1}}, true)
         expect(chessifySimpleCase.currentBoard[2]).toEqual([null, {name: ChessPiecesName.blackKing, lastPosition: coordFrom}, null,null, null, null, null, null])
 
         chessifySimpleCase._undoLastMove()
@@ -83,7 +83,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
     it ("correctly performs ilvaticano", () => {
         const ilVaticanoCoordFrom = {row:3,column: 0}
-        chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(ilVaticanoCoordFrom, {coord: {row: 3, column: 3}, action: MoveAction.ilVaticano})
+        chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(ilVaticanoCoordFrom, {coord: {row: 3, column: 3}, action: MoveAction.ilVaticano}, true)
         expect(chessify_HCastling_KnightBoost_IlVaticano.currentBoard[3]).toEqual([{name: ChessPiecesName.whiteBishop, lastPosition: {row: 3, column: 3}}, null, null, {name: ChessPiecesName.whiteBishop, lastPosition: ilVaticanoCoordFrom}, null, null, null, null],)
         
         chessify_HCastling_KnightBoost_IlVaticano._undoLastMove()
@@ -93,7 +93,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
     it ("correctly does for castling", () => {
         const castlingFrom = {row: 7, column: 3}
         chessify_HCastling_KnightBoost_IlVaticano.turnToPlay = PlayerColor.white
-        chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(castlingFrom, {coord: {row: 7, column: 1}, action: MoveAction.horizontalCastling})
+        chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(castlingFrom, {coord: {row: 7, column: 1}, action: MoveAction.horizontalCastling}, true)
         expect(chessify_HCastling_KnightBoost_IlVaticano.currentBoard[7]).toEqual([null,{name: ChessPiecesName.whiteKing, lastPosition: castlingFrom}, {name: ChessPiecesName.whiteRook, lastPosition: {row: 7, column: 0}}, null, null, null, null, null],)
 
         chessify_HCastling_KnightBoost_IlVaticano._undoLastMove()
@@ -103,7 +103,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
     it ("correctly promotes pawn for knight boost and gives it the boost", () => {
         const knightBoostFrom = {row: 1, column: 1}
         chessify_HCastling_KnightBoost_IlVaticano.turnToPlay = PlayerColor.white
-        chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(knightBoostFrom, {coord: {row: 2, column: 0}, action: MoveAction.knightBoost})
+        chessify_HCastling_KnightBoost_IlVaticano.moveWithAction(knightBoostFrom, {coord: {row: 2, column: 0}, action: MoveAction.knightBoost}, true)
         expect(chessify_HCastling_KnightBoost_IlVaticano.currentBoard[2]).toEqual([{name: ChessPiecesName.whiteKnight, lastPosition: null}, null, null, null, null, null, null, null],)
 
         chessify_HCastling_KnightBoost_IlVaticano._undoLastMove()
@@ -112,7 +112,7 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
 
     it ("correctly performs action for passant" ,() => {
         const passantFrom = {row: 3,column: 4}
-        chessifyPassant_twoStepsHardCoded.moveWithAction(passantFrom, {coord: {row: 2, column: 5}, action: MoveAction.enPassant})
+        chessifyPassant_twoStepsHardCoded.moveWithAction(passantFrom, {coord: {row: 2, column: 5}, action: MoveAction.enPassant}, true)
         expect(chessifyPassant_twoStepsHardCoded.currentBoard[2]).toEqual([
             { name: 'BLACK_KING', lastPosition: null },
             null,
@@ -152,14 +152,14 @@ describe("it moves the pieces and performs the actions correctly" , ()=>{
         chessifyPassant_withoutHardcoding.turnToPlay = PlayerColor.black
         let moveList = chessifyPassant_withoutHardcoding._generatePseduoLegalMovesFor(pieceToPlay)
         const twoStepMove = moveList.filter((val) =>  val.coord.column === 5 && val.coord.row === 3).pop() as IGeneratedMoves
-        chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay,twoStepMove)
+        chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay,twoStepMove, true)
 
         expect(chessifyPassant_withoutHardcoding.currentBoard[1]).toEqual( [null, null, null, null, null, null, null, null])
 
         pieceToPlay = {row: 3, column: 4}
         moveList = chessifyPassant_withoutHardcoding._generatePseduoLegalMovesFor(pieceToPlay)
         let nextMove = moveList.filter((val) => val.coord.column === 5 && val.coord.row === 2).pop() as IGeneratedMoves
-        chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay, nextMove)
+        chessifyPassant_withoutHardcoding.moveWithAction(pieceToPlay, nextMove, true)
 
         expect(chessifyPassant_withoutHardcoding.currentBoard[2]).toEqual([{name : ChessPiecesName.blackKing, lastPosition: null}, null, null, null, null, {name : ChessPiecesName.whitePawn, lastPosition: pieceToPlay}, null, null],)
     })

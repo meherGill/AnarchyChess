@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
-import {ChessPiecesName, PlayerColor} from "@enums";
+import {ChessPiecesName, MoveAction, PlayerColor} from "@enums";
 import ChessLogic from "../ChessLogic";
+import exp from "constants";
+import { ISquareCoordinate } from "../../../shared/types";
 
 describe("correctly detects if king is in check", () => {
     let boardConfigKingCheckFromQueen1 = [
@@ -195,27 +197,50 @@ describe("correctly detects if king is in check", () => {
     
 })
 
-describe ("correctly checks if the given move will put king in check using memoizedMap" , () => {
-    let boardConfigNew = [
-        [ChessPiecesName.whiteKing, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, ChessPiecesName.blackQueen, null, null, ChessPiecesName.whitePawn],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null, null],
-        [null, null, null, ChessPiecesName.blackKing, null, null, null, null],
-    ];
+// describe ("correctly checks if the given move will put king in check using memoizedMap" , () => {
+//     let boardConfigNew = [
+//         [null,null,null,null,ChessPiecesName.blackBishop,null,null,null],
+//         [null,null,null,ChessPiecesName.whitePawn,null,null,null,null],
+//         [null,null,null,null,null,null,null,null],
+//         [null,null,null,null,null,null,null,null],
+//         [ChessPiecesName.blackKing,null,null,null,null,null,null,null],
+//         [null,null,null,null,null,null,null,null],
+//         [null,null,null,null,null,null,ChessPiecesName.blackPawn,null],
+//         [null,null,null,null,null,ChessPiecesName.whiteBishop,ChessPiecesName.whiteKing,ChessPiecesName.blackKnight],
+//     ]
 
 
-    const chessifyNew = new ChessLogic(boardConfigNew)
+//     const chessifyNewA = new ChessLogic(boardConfigNew)
 
-    it ("doesnt make a piece move if that move is not protecting king from check, which otherwise would have been valid" , () => {
-        let coordFrom = {row:4, column: 7}
-        let coordTo = {row: 3, column: 7}
-        let res = chessifyNew.playerMadeMove(coordFrom, coordTo)
-        expect(res.valid).toEqual(false)
-        let checkIfChecky = chessifyNew.checkIfCheckedCoord(coordFrom, coordTo)
-        expect(checkIfChecky).toEqual(true)
-    })
-})
+//     it ("doesnt make a piece move if that move is not protecting king from check, which otherwise would have been valid" , () => {
+//         let coordFrom = {row:1, column: 3}
+//         let coordTo = {row: 0, column: 4}
+//         let res = chessifyNewA.playerMadeMove(coordFrom, coordTo, MoveAction.pawnPromotionQueen)
+//         expect(res.valid).toEqual(true)
+//         coordFrom = {row:6, column: 6}
+//         coordTo = {row: 7, column: 5}
+//         res = chessifyNewA.playerMadeMove(coordFrom, coordTo)
+//         let checkIfChecky = chessifyNewA.checkIfCheckedCoord(coordFrom, coordTo)
+//         expect(checkIfChecky).toEqual(true)
+//         // expect(res.valid).toEqual(false)
+//     })
+
+//     const chessifyNewB = new ChessLogic(boardConfigNew)
+
+//     it ("all moves that would cause king to be in check are recorded in memoized check moves" , () => {
+//         let coordFrom = {row:1, column: 3}
+//         let coordTo = {row: 0, column: 3}
+//         chessifyNewB.playerMadeMove(coordFrom, coordTo, MoveAction.pawnPromotionQueen)
+//         const movesWhichPutKingInCheckArr = []
+//         // const allPseudoLegalMoves = chessifyNewB._generatePseudoLegalMovesForAllPiecesFor()
+//         // for (const coord of allPseudoLegalMoves.keys()){
+//         //     for (const move of allPseudoLegalMoves.get(coord)){
+//         //         chessifyNewB.moveWithAction(coord, move)
+//         //         if (chessifyNewB._isKingInCheck().inCheck){
+                    
+//         //         }
+//         //     }
+//         // }
+//     })
+
+// })

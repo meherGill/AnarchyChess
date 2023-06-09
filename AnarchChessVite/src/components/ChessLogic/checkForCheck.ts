@@ -82,7 +82,7 @@ export const checkIfGivenPositionIsInCheck = (givenPosition: ISquareCoordinate, 
             }
 
             if (isKnightLikeCheckPossible){
-                const possibleKnightMovesAtKingsCoord = knightLikeMoves(givenPosition, currentBoard)
+                const possibleKnightMovesAtKingsCoord = knightLikeMoves(givenPosition, currentBoard,)
                 //check for knook, and knight
                 for (const generatedMove of possibleKnightMovesAtKingsCoord){
                     const coord = generatedMove.coord

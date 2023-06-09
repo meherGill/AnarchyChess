@@ -277,7 +277,6 @@ const commonFunctionalityForRookAndBishop = (coords: ISquareCoordinate, currentB
                 if (isValidMoveAndCapture.capture){
                     break;
                 }
-         
             }
             else{
                 break
@@ -328,7 +327,10 @@ export const rookLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Arr
     return commonFunctionalityForRookAndBishop(coords, currentBoard, straightFunctionArr)
 }
 
-export const knightLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>, playerColor: PlayerColor) : Array<IGeneratedMoves>=> {
+export const knightLikeMoves = (coords: ISquareCoordinate, currentBoard: Array<Array<IChessPiece | null>>, playerColor?: PlayerColor) : Array<IGeneratedMoves>=> {
+    if (!playerColor){
+        playerColor = returnColorOfPiece(_getPieceOnCoord(coords, currentBoard)!.name)
+    }
     const returnMovesArray : Array<IGeneratedMoves>= []
     // const playerColor = returnColorOfPiece(_getPieceOnCoord(coords, currentBoard)!.name)
 

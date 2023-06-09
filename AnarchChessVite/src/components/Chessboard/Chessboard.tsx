@@ -94,6 +94,7 @@ const Chessboard = () => {
         if (result.valid) {
             setMoveDone(moveDone * -1);
         } else if (result.message === MoveGenerationMessage.checked) {
+            //wiggle the square
             const kingCoords = chessLogicValue!.getKingCoordForPlayer();
             const squareToAnimate = document.querySelector(
                 `#id_${kingCoords!.row}_${kingCoords!.column}`

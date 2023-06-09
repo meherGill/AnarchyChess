@@ -202,7 +202,7 @@ describe("test post processing function" , () => {
 
         expectedLegalMoves = new CoordMapper()
 
-        chessifyForcedPassant.moveWithAction({row: 6, column: 1}, {coord: {row: 4, column: 1}})
+        chessifyForcedPassant.moveWithAction({row: 6, column: 1}, {coord: {row: 4, column: 1}}, true)
         chessifyForcedPassant.turnToPlay = PlayerColor.black
         chessifyForcedPassant.postMoveComputation()
 
@@ -270,7 +270,7 @@ describe("it correctly calls checkmate and stalemate", () => {
     it ("correctly calls checkmate in mate in 1 position", () => {
         let spy = vi.spyOn(chessifyVanillaMateInOne, 'checkmateHandler')
         expect(spy).toHaveBeenCalledTimes(0)
-        chessifyVanillaMateInOne.moveWithAction({row:1, column: 7}, {coord: {row: 1, column: 1}})
+        chessifyVanillaMateInOne.moveWithAction({row:1, column: 7}, {coord: {row: 1, column: 1}}, true)
         chessifyVanillaMateInOne.turnToPlay = PlayerColor.black
         chessifyVanillaMateInOne.postMoveComputation()
         expect(spy).toHaveBeenCalledTimes(1)
@@ -279,16 +279,16 @@ describe("it correctly calls checkmate and stalemate", () => {
     it ("correctly calls mate due to forced passant" , () => {
         let spy = vi.spyOn(chessifyMateDueToPassant, 'checkmateHandler')
         expect(spy).toHaveBeenCalledTimes(0)
-        chessifyMateDueToPassant.moveWithAction({row:6, column: 4}, {coord: {row: 4, column: 4}, action: MoveAction.enPassant})
-        chessifyMateDueToPassant.turnToPlay = PlayerColor.black
-        chessifyMateDueToPassant.postMoveComputation()
+        chessifyMateDueToPassant.playerMadeMove({row:6, column: 4}, {row: 4, column: 4})
+        // chessifyMateDueToPassant.turnToPlay = PlayerColor.black
+        // chessifyMateDueToPassant.postMoveComputation()
         expect(spy).toHaveBeenCalledTimes(1)
     })
 
     it ("correctly calls checkmate handler for smothered mate", () => {
         let spy = vi.spyOn(chessifySmotheredMate, 'checkmateHandler')
         expect(spy).toHaveBeenCalledTimes(0)
-        chessifySmotheredMate.moveWithAction({row: 3, column: 1}, {coord: {row: 1, column: 2}})
+        chessifySmotheredMate.moveWithAction({row: 3, column: 1}, {coord: {row: 1, column: 2}}, true)
         chessifySmotheredMate.turnToPlay = PlayerColor.black
         chessifySmotheredMate.postMoveComputation()
         expect(spy).toHaveBeenCalledTimes(1)
@@ -297,7 +297,7 @@ describe("it correctly calls checkmate and stalemate", () => {
     it ("correctly calls stalemate handler", () => {
         let spy = vi.spyOn(chessifyStalemateInOne, 'stalemateHandler')
         expect(spy).toHaveBeenCalledTimes(0)
-        chessifyStalemateInOne.moveWithAction({row: 1, column: 7}, {coord: {row: 1, column: 2}})
+        chessifyStalemateInOne.moveWithAction({row: 1, column: 7}, {coord: {row: 1, column: 2}}, true)
         chessifyStalemateInOne.turnToPlay = PlayerColor.black
         chessifyStalemateInOne.postMoveComputation()
         expect(spy).toHaveBeenCalledTimes(1)
