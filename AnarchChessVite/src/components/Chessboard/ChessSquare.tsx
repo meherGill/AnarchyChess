@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { ChessPiecesName, ChessSquareColor } from "@shared/enums";
+import { ChessSquareColor } from "@shared/enums";
 import { IChessPiece, ISquareCoordinate } from "@shared/types";
 import ChessPiece from "./ChessPieces/ChessPieces";
+import { PieceClickContext } from "./Chessboard";
 
 interface ChessSquarePropsInterface {
     squareColor: ChessSquareColor;
     row: number;
     column: number;
     piece: IChessPiece | null;
+    highlighted: boolean;
     ref?: React.Ref<any>;
 }
 
@@ -17,9 +19,9 @@ const ChessSquare = ({
     piece,
     row,
     column,
+    highlighted,
 }: ChessSquarePropsInterface) => {
-    // console.count("render");
-
+    const onClickHandlerFromContext = useContext(PieceClickContext);
     const { setNodeRef } = useDroppable({
         id: `${row}_${column}`,
         data: {
@@ -43,15 +45,25 @@ const ChessSquare = ({
     } else {
         bgToUse = "bg-red-50";
     }
+    const displaySquaresOnClick = () => {
+        onClickHandlerFromContext({ row: row, column: column });
+    };
 
     return (
         <div
             ref={setNodeRef}
             className={`${bgToUse} h-[80px] w-[80px]`}
             id={`id_${row}_${column}`}
+            onClick={displaySquaresOnClick}
         >
-            <div className="flex justify-center items-center h-full w-full text-black">
-                {getPieceValueFromIChessPiece(piece)}
+            <div className="h-full w-full text-black">
+                <div
+                    className={`${
+                        highlighted ? "bg-green-500 opacity-40" : ""
+                    } h-full w-full flex justify-center items-center `}
+                >
+                    {getPieceValueFromIChessPiece(piece)}
+                </div>
             </div>
         </div>
     );
