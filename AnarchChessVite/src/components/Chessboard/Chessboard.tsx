@@ -150,6 +150,13 @@ const Chessboard = () => {
                     {chessLogicValue!.turnToPlay} Sacrificed the KINGGGG!!!!
                 </h2>
             );
+        } else if (chessLogicValue!.stalemate) {
+            openModal(
+                <h2 className="text-white">
+                    {chessLogicValue!.turnToPlay} Sacrificed the GAMEEEE!!!!
+                    Stalemate
+                </h2>
+            );
         }
     };
 
