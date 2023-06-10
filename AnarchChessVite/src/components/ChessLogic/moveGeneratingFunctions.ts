@@ -245,8 +245,8 @@ export const kingLikeMoves = (coord: ISquareCoordinate, currentBoard: Array<Arra
                     newCoords.column += columnOffset
                     newCoords.row += rowOffset
     
-                    //check for c2 square, c2 is row: 5, column 2
-                    if (newCoords.column === 2 && newCoords.row === 5){
+                    //check for c2 square, c2 is row: 6, column 2
+                    if (newCoords.column === 2 && newCoords.row === 6){
                         continue
                     }
                     if (checkIfCoordInBound(newCoords) && 

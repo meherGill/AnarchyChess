@@ -280,7 +280,7 @@ describe("ChessLogic class", () => {
                     { row: 7, column: 1 },
                     { row: 7, column: 2 },
                     { row: 6, column: 0 },
-                    { row: 6, column: 2 },
+                    { row: 5, column: 2 },
                     { row: 5, column: 0 },
                     { row: 5, column: 1 },
                 ].sort(customSortFn)
